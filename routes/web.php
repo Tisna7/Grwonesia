@@ -19,17 +19,32 @@ use App\Http\Controllers\Government\PolicyController;
 use App\Http\Controllers\Government\ProgramController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GrownesiaController;
+use App\Http\Controllers\AuthController;
 
-Route::view('/', 'welcome')->name('home');
+// Public Landing Page (with Navbar)
+Route::get('/', [GrownesiaController::class, 'landing'])->name('landing');
+// Route::view('/', 'welcome')->name('home');
 
 Route::middleware('guest')->group(function () {
-    Route::get('/register', [RegisterController::class, 'create'])->name('register');
-    Route::post('/register', [RegisterController::class, 'store']);
-    Route::get('/login', [LoginController::class, 'create'])->name('login');
-    Route::post('/login', [LoginController::class, 'store']);
+//     Route::get('/register', [RegisterController::class, 'create'])->name('register');
+//     Route::post('/register', [RegisterController::class, 'store']);
+//     Route::get('/login', [LoginController::class, 'create'])->name('login');
+//     Route::post('/login', [LoginController::class, 'store']);
+  
+  
+    // Dedicated Authentication Pages (Split 2-Column Screen Layout)
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
-Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
+// Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
+Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Logged-in User Dashboard (with Sidebar)
+Route::get('/dashboard', [GrownesiaController::class, 'dashboard'])->middleware('auth')->name('user.dashboard');
 
 Route::middleware(['auth', 'role:business'])->prefix('business')->name('business.')->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
