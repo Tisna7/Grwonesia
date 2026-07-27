@@ -8,6 +8,16 @@ use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        $this->call([
+            DemoBusinessSeeder::class,
+            RegionalDemoSeeder::class,
+            AdminDemoSeeder::class,
+        ]);
     public function run(): void
     {
         User::firstOrCreate(
