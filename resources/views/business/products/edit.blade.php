@@ -10,9 +10,7 @@
     <div class="glass-card p-6 xl:col-span-2">
         <div class="flex items-start justify-between mb-4">
             <h3 class="text-sm font-bold text-white">Detail Produk</h3>
-            @if ($product->photo_path)
-                <img src="{{ asset('storage/'.$product->photo_path) }}" alt="" class="w-16 h-16 rounded-xl object-cover border border-primary-400/20">
-            @endif
+            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-16 h-16 rounded-xl object-cover border border-primary-400/20">
         </div>
         <form method="POST" action="{{ route('business.products.update', $product) }}" enctype="multipart/form-data">
             @method('PUT')

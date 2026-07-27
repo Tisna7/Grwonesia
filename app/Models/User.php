@@ -22,7 +22,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'role',
         'password',
         'role',
         'phone',
@@ -60,5 +59,17 @@ class User extends Authenticatable
     public function isBusiness(): bool
     {
         return $this->role === UserRole::Business;
+    }
+
+    public function getDashboardRouteName(): string
+    {
+        $roleValue = $this->role instanceof UserRole ? $this->role->value : (string) $this->role;
+
+        return match ($roleValue) {
+            'business' => 'business.dashboard',
+            'government' => 'government.dashboard',
+            'admin' => 'admin.dashboard',
+            default => 'user.dashboard',
+        };
     }
 }

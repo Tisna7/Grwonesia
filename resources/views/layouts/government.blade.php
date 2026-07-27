@@ -37,6 +37,13 @@
                     <x-icon name="sliders"/> Policy Simulator
                 </a>
             </div>
+
+            <p class="section-label">Ekosistem</p>
+            <div class="space-y-1">
+                <a href="{{ route('user.dashboard') }}" target="_blank" class="sidebar-link">
+                    <x-icon name="shopping-bag"/> Marketplace (Pembeli)
+                </a>
+            </div>
         </nav>
         <div class="px-4 py-4 border-t border-primary-400/10">
             <div class="flex items-center gap-3">
@@ -68,10 +75,7 @@
                     <p class="text-[11px] text-slate-500">{{ now()->translatedFormat('l, d F Y') }}</p>
                 </div>
             </div>
-            <span class="hidden md:inline-flex badge-pill bg-indigo-500/10 text-indigo-300 border-indigo-500/25">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                {{ auth()->user()->role->label() }}
-            </span>
+            <x-role-switcher />
         </header>
 
         <main class="flex-1 px-6 py-6">

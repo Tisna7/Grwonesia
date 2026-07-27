@@ -67,4 +67,30 @@ class Product extends Model
     {
         return $this->stock <= $this->min_stock;
     }
+
+    public function getImageUrlAttribute(): string
+    {
+        if ($this->photo_path) {
+            if (str_starts_with($this->photo_path, 'http')) {
+                return $this->photo_path;
+            }
+            return asset('storage/' . $this->photo_path);
+        }
+
+        $categorySlug = match (strtolower($this->category ?? '')) {
+            'minuman', 'kopi' => 'kopi',
+            'batik', 'fashion', 'pakaian' => 'batik',
+            'kerajinan', 'craft' => 'kerajinan',
+            default => 'makanan',
+        };
+
+        $defaultImages = [
+            'kopi' => asset('images/products/kopi_gula_aren.png'),
+            'batik' => asset('images/products/batik_solo.png'),
+            'kerajinan' => asset('images/products/tas_anyaman.png'),
+            'makanan' => asset('images/products/keripik_kopi.png'),
+        ];
+
+        return $defaultImages[$categorySlug] ?? asset('images/products/kopi_gula_aren.png');
+    }
 }

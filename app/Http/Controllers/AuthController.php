@@ -13,7 +13,7 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('user.dashboard');
+            return redirect()->route(Auth::user()->getDashboardRouteName());
         }
         return view('auth.login');
     }
@@ -29,7 +29,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+            $request->session()->forget('url.intended');
+
+            $user = $request->user();
+            return redirect()->route($user->getDashboardRouteName())
+                ->with('success', 'Selamat datang kembali, '.$user->name.'!');
         }
 
         return back()->withErrors([
@@ -40,7 +44,7 @@ class AuthController extends Controller
     public function showRegisterForm()
     {
         if (Auth::check()) {
-            return redirect()->route('user.dashboard');
+            return redirect()->route(Auth::user()->getDashboardRouteName());
         }
         return view('auth.register');
     }
@@ -62,8 +66,10 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
+        $request->session()->regenerate();
+        $request->session()->forget('url.intended');
 
-        return redirect()->route('user.dashboard')->with('success', 'Akun berhasil dibuat! Selamat datang di Grownesia.');
+        return redirect()->route($user->getDashboardRouteName())->with('success', 'Akun berhasil dibuat! Selamat datang di Grownesia.');
     }
 
     public function logout(Request $request)
@@ -72,6 +78,39 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('login')->with('success', 'Anda telah berhasil keluar dari akun Grownesia.');
+    }
+
+    public function switchRole(Request $request, string $role)
+    {
+        $emails = [
+            'user' => 'budi@grownesia.id',
+            'business' => 'demo@grownesia.test',
+            'government' => 'gov@grownesia.test',
+            'admin' => 'admin@grownesia.test',
+        ];
+
+        if (! array_key_exists($role, $emails)) {
+            return back()->with('error', 'Role tidak valid.');
+        }
+
+        $user = User::where('email', $emails[$role])->first();
+
+        if (! $user) {
+            return back()->with('error', 'Akun demo untuk role ini belum tersedia.');
+        }
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        $roleLabels = [
+            'user' => 'Pembeli / Consumer',
+            'business' => 'UMKM (Business Studio)',
+            'government' => 'Government (Dinas UMKM)',
+            'admin' => 'Super Admin',
+        ];
+
+        return redirect()->route($user->getDashboardRouteName())
+            ->with('success', 'Berhasil beralih ke akun '.$roleLabels[$role].' ('.$user->name.').');
     }
 }

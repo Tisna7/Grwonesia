@@ -18,12 +18,14 @@ class RegionalDemoSeeder extends Seeder
     public function run(): void
     {
         // Akun demo Government (institusional — dibuat manual, bukan self-register)
-        $gov = User::factory()->create([
-            'name' => 'Dinas Koperasi & UMKM Jabar',
-            'email' => 'gov@grownesia.test',
-            'password' => 'password',
-            'role' => 'government',
-        ]);
+        $gov = User::firstOrCreate(
+            ['email' => 'gov@grownesia.test'],
+            [
+                'name' => 'Dinas Koperasi & UMKM Jabar',
+                'password' => 'password',
+                'role' => 'government',
+            ]
+        );
 
         // Bisnis regional tambahan di kota berbeda agar data agregat bermakna
         $regionDefs = [
@@ -49,21 +51,29 @@ class RegionalDemoSeeder extends Seeder
         ];
 
         foreach ($regionDefs as $index => [$name, $category, $city, $productDefs]) {
-            $owner = User::factory()->create([
-                'name' => 'Pemilik '.$name,
-                'email' => 'umkm'.($index + 2).'@grownesia.test',
-                'password' => 'password',
-                'role' => 'business',
-            ]);
+            $owner = User::firstOrCreate(
+                ['email' => 'umkm'.($index + 2).'@grownesia.test'],
+                [
+                    'name' => 'Pemilik '.$name,
+                    'password' => 'password',
+                    'role' => 'business',
+                ]
+            );
 
-            $business = Business::factory()->create([
-                'user_id' => $owner->id,
-                'name' => $name,
-                'slug' => Str::slug($name),
-                'category' => $category,
-                'city' => $city,
-                'monthly_fixed_cost' => mt_rand(2, 5) * 1000000,
-            ]);
+            $business = Business::firstOrCreate(
+                ['slug' => Str::slug($name)],
+                [
+                    'user_id' => $owner->id,
+                    'name' => $name,
+                    'category' => $category,
+                    'city' => $city,
+                    'monthly_fixed_cost' => mt_rand(2, 5) * 1000000,
+                ]
+            );
+
+            if (! $business->wasRecentlyCreated && Product::where('business_id', $business->id)->exists()) {
+                continue;
+            }
 
             $products = collect($productDefs)->map(fn (array $d) => Product::create([
                 'business_id' => $business->id,
@@ -128,28 +138,32 @@ class RegionalDemoSeeder extends Seeder
         }
 
         // Contoh program dinas
-        GovProgram::create([
-            'user_id' => $gov->id,
-            'title' => 'Pelatihan Pemasaran Digital UMKM Kuliner',
-            'type' => 'pelatihan',
-            'sector' => 'Kuliner',
-            'city' => 'Sukabumi',
-            'description' => 'Pelatihan optimasi marketplace dan media sosial untuk 50 UMKM kuliner terpilih.',
-            'status' => 'aktif',
-            'starts_at' => Carbon::today()->addDays(7),
-            'ends_at' => Carbon::today()->addDays(9),
-        ]);
+        GovProgram::firstOrCreate(
+            ['title' => 'Pelatihan Pemasaran Digital UMKM Kuliner'],
+            [
+                'user_id' => $gov->id,
+                'type' => 'pelatihan',
+                'sector' => 'Kuliner',
+                'city' => 'Sukabumi',
+                'description' => 'Pelatihan optimasi marketplace dan media sosial untuk 50 UMKM kuliner terpilih.',
+                'status' => 'aktif',
+                'starts_at' => Carbon::today()->addDays(7),
+                'ends_at' => Carbon::today()->addDays(9),
+            ]
+        );
 
-        GovProgram::create([
-            'user_id' => $gov->id,
-            'title' => 'Pameran Produk Unggulan Jawa Barat',
-            'type' => 'pameran',
-            'sector' => null,
-            'city' => 'Bandung',
-            'description' => 'Pameran tahunan produk UMKM se-Jawa Barat di Trans Studio Mall.',
-            'status' => 'draft',
-            'starts_at' => Carbon::today()->addMonth(),
-            'ends_at' => Carbon::today()->addMonth()->addDays(3),
-        ]);
+        GovProgram::firstOrCreate(
+            ['title' => 'Pameran Produk Unggulan Jawa Barat'],
+            [
+                'user_id' => $gov->id,
+                'type' => 'pameran',
+                'sector' => null,
+                'city' => 'Bandung',
+                'description' => 'Pameran tahunan produk UMKM se-Jawa Barat di Trans Studio Mall.',
+                'status' => 'draft',
+                'starts_at' => Carbon::today()->addMonth(),
+                'ends_at' => Carbon::today()->addMonth()->addDays(3),
+            ]
+        );
     }
 }

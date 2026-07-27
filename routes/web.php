@@ -42,9 +42,11 @@ Route::middleware('guest')->group(function () {
 
 // Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
+Route::match(['get', 'post'], '/switch-role/{role}', [AuthController::class, 'switchRole'])->name('switch-role');
 
-// Logged-in User Dashboard (with Sidebar)
+// Logged-in User Dashboard & Checkout
 Route::get('/dashboard', [GrownesiaController::class, 'dashboard'])->middleware('auth')->name('user.dashboard');
+Route::post('/checkout', [\App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
 
 Route::middleware(['auth', 'role:business'])->prefix('business')->name('business.')->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');

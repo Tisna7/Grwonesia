@@ -27,12 +27,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(match ($request->user()->role) {
-            UserRole::Business => route('business.dashboard'),
-            UserRole::Government => route('government.dashboard'),
-            UserRole::Admin => route('admin.dashboard'),
-            default => route('home'),
-        });
+        return redirect()->intended(route($request->user()->getDashboardRouteName()));
     }
 
     public function destroy(Request $request): RedirectResponse

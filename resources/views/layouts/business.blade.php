@@ -55,13 +55,16 @@
                 </a>
             </div>
 
-            <p class="section-label">Koneksi</p>
+            <p class="section-label">Koneksi Ekosistem</p>
             <div class="space-y-1">
                 <a href="{{ route('business.whatsapp') }}" class="sidebar-link {{ request()->routeIs('business.whatsapp*') ? 'active' : '' }}">
                     <x-icon name="message-circle"/> WhatsApp
                 </a>
                 <a href="{{ route('business.instagram') }}" class="sidebar-link {{ request()->routeIs('business.instagram*') ? 'active' : '' }}">
                     <x-icon name="instagram"/> Instagram
+                </a>
+                <a href="{{ route('user.dashboard') }}" target="_blank" class="sidebar-link">
+                    <x-icon name="globe"/> Marketplace (Pembeli)
                 </a>
             </div>
         </nav>
@@ -115,10 +118,7 @@
                         Menunggu Verifikasi
                     </span>
                 @endif
-                <span class="hidden md:inline-flex badge-pill bg-primary-600/10 text-primary-300 border-primary-500/25">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    {{ auth()->user()->role->label() }}
-                </span>
+                <x-role-switcher />
             </div>
         </header>
 

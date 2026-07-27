@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Grownesia - Platform Ekosistem UMKM Indonesia Berbasis AI & Impact-Driven Shopping">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Grownesia - Pemberdayaan UMKM Indonesia Berbasis AI</title>
 
     <!-- Vite Assets -->
@@ -24,21 +25,21 @@
                 <span class="text-purple-200/80">Selamat datang di Ekosistem Digital <strong>Grownesia</strong></span>
             </div>
             
-            <!-- Quick Role Preview Navigation Buttons -->
+            <!-- Quick Role Switcher Navigation Buttons -->
             <div class="flex items-center gap-2 text-xs">
-                <span class="text-purple-300/60 hidden md:inline">Lihat Preview Role Lain:</span>
-                <button @click="openRolePreview('business')" class="px-2.5 py-1 rounded-md bg-purple-800/40 hover:bg-purple-700/60 text-purple-200 border border-purple-500/30 transition flex items-center gap-1">
+                <span class="text-purple-300/60 hidden md:inline">Pindah Role Mode:</span>
+                <a href="{{ route('switch-role', 'business') }}" class="px-2.5 py-1 rounded-md bg-purple-800/40 hover:bg-purple-700/60 text-purple-200 border border-purple-500/30 transition flex items-center gap-1">
                     <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     Business Account
-                </button>
-                <button @click="openRolePreview('government')" class="px-2.5 py-1 rounded-md bg-purple-800/40 hover:bg-purple-700/60 text-purple-200 border border-purple-500/30 transition flex items-center gap-1">
+                </a>
+                <a href="{{ route('switch-role', 'government') }}" class="px-2.5 py-1 rounded-md bg-purple-800/40 hover:bg-purple-700/60 text-purple-200 border border-purple-500/30 transition flex items-center gap-1">
                     <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                     Government
-                </button>
-                <button @click="openRolePreview('superadmin')" class="px-2.5 py-1 rounded-md bg-purple-800/40 hover:bg-purple-700/60 text-purple-200 border border-purple-500/30 transition flex items-center gap-1">
+                </a>
+                <a href="{{ route('switch-role', 'admin') }}" class="px-2.5 py-1 rounded-md bg-purple-800/40 hover:bg-purple-700/60 text-purple-200 border border-purple-500/30 transition flex items-center gap-1">
                     <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     Super Admin
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -547,7 +548,23 @@
                     this.showCheckoutModal = true;
                 },
 
-                processPaymentSuccess() {
+                async processPaymentSuccess() {
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    if (this.cart.length > 0) {
+                        try {
+                            await fetch('/checkout', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': token || ''
+                                },
+                                body: JSON.stringify({ cart: this.cart })
+                            });
+                        } catch (err) {
+                            console.error('Gagal mengirim pesanan ke server:', err);
+                        }
+                    }
+
                     this.lastOrderImpactSummary = "3 Pekerja Lokal, 1 Desa Berkembang, & 2 Penenun Terbantu";
                     this.userImpact.totalJobs += 3;
                     this.userImpact.villagesHelped += 1;

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Grownesia User Dashboard - Ekosistem Pemberdayaan UMKM Indonesia Berbasis AI">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard User - Grownesia AI & Impact</title>
 
     <!-- Vite Assets -->
@@ -431,10 +432,26 @@
                     return count + ' Pekerja Lokal & ' + Math.ceil(count/2) + ' Desa Terbantu';
                 },
 
-                processPaymentSuccess() {
+                async processPaymentSuccess() {
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    if (this.cart.length > 0) {
+                        try {
+                            await fetch('/checkout', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': token || ''
+                                },
+                                body: JSON.stringify({ cart: this.cart })
+                            });
+                        } catch (err) {
+                            console.error('Gagal mengirim pesanan ke server:', err);
+                        }
+                    }
+
                     const newOrderId = 'GRW-2026-' + Math.floor(1000 + Math.random() * 9000);
-                    const firstProd = this.cart.length > 0 ? this.cart[0].product : this.products[0];
-                    const itemsSummary = this.cart.map(c => `${c.product.name} (${c.qty}x)`).join(', ');
+                    const firstProd = this.cart.length > 0 ? this.cart[0].product : (this.products[0] || { id: 1, name: 'Produk UMKM' });
+                    const itemsSummary = this.cart.length > 0 ? this.cart.map(c => `${c.product.name} (${c.qty}x)`).join(', ') : 'Pesanan UMKM';
                     
                     this.ordersHistory.unshift({
                         id: newOrderId,

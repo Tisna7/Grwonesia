@@ -18,8 +18,6 @@ class DatabaseSeeder extends Seeder
             RegionalDemoSeeder::class,
             AdminDemoSeeder::class,
         ]);
-    public function run(): void
-    {
         User::firstOrCreate(
             ['email' => 'budi@grownesia.id'],
             [
