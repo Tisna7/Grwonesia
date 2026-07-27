@@ -14,6 +14,24 @@ return [
     |
     */
 
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+        // Model murah untuk tugas ringan (caption, judul SEO, deskripsi)
+        'model_lite' => env('GEMINI_MODEL_LITE', 'gemini-2.5-flash-lite'),
+    ],
+
+    'whatsapp' => [
+        'driver' => env('WA_DRIVER', 'log'),
+        'url' => env('WA_GATEWAY_URL'),
+        'token' => env('WA_GATEWAY_TOKEN'),
+    ],
+
+    'instagram' => [
+        'business_id' => env('IG_BUSINESS_ID'),
+        'token' => env('IG_ACCESS_TOKEN'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

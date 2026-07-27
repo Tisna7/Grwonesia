@@ -1,7 +1,88 @@
 <?php
 
+use App\Http\Controllers\Admin\AiCenterController;
+use App\Http\Controllers\Admin\BusinessVerificationController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Business\CoachController;
+use App\Http\Controllers\Business\DashboardController;
+use App\Http\Controllers\Business\FinanceController;
+use App\Http\Controllers\Business\InstagramController;
+use App\Http\Controllers\Business\InventoryController;
+use App\Http\Controllers\Business\MarketingController;
+use App\Http\Controllers\Business\OrderController;
+use App\Http\Controllers\Business\ProductAiController;
+use App\Http\Controllers\Business\ProductController;
+use App\Http\Controllers\Business\ProgramSignupController;
+use App\Http\Controllers\Business\WhatsAppController;
+use App\Http\Controllers\Government\PolicyController;
+use App\Http\Controllers\Government\ProgramController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::view('/', 'welcome')->name('home');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store']);
+    Route::get('/login', [LoginController::class, 'create'])->name('login');
+    Route::post('/login', [LoginController::class, 'store']);
+});
+
+Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
+
+Route::middleware(['auth', 'role:business'])->prefix('business')->name('business.')->group(function () {
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    Route::resource('products', ProductController::class)->except('show');
+    Route::post('products/{product}/ai/photo', [ProductAiController::class, 'photo'])->name('products.ai.photo');
+    Route::post('products/{product}/ai/seo', [ProductAiController::class, 'seo'])->name('products.ai.seo');
+    Route::post('products/{product}/ai/description', [ProductAiController::class, 'description'])->name('products.ai.description');
+
+    Route::resource('orders', OrderController::class)->only(['index', 'create', 'store', 'show']);
+    Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+
+    Route::get('/inventory', InventoryController::class)->name('inventory');
+
+    Route::get('/coach', [CoachController::class, 'index'])->name('coach');
+    Route::post('/coach/{chat?}', [CoachController::class, 'send'])->name('coach.send');
+
+    Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing');
+    Route::post('/marketing/generate', [MarketingController::class, 'generate'])->name('marketing.generate');
+
+    Route::get('/whatsapp', [WhatsAppController::class, 'index'])->name('whatsapp');
+    Route::post('/whatsapp/broadcast', [WhatsAppController::class, 'broadcast'])->name('whatsapp.broadcast');
+
+    Route::get('/instagram', [InstagramController::class, 'index'])->name('instagram');
+    Route::post('/instagram/publish', [InstagramController::class, 'publish'])->name('instagram.publish');
+
+    Route::post('/programs/{program}/register', [ProgramSignupController::class, 'store'])->name('programs.register');
+
+    Route::get('/finance', FinanceController::class)->name('finance');
+    Route::post('/finance/fixed-cost', function (Request $request) {
+        $request->validate(['monthly_fixed_cost' => ['required', 'numeric', 'min:0']]);
+        $request->user()->business->update(['monthly_fixed_cost' => $request->monthly_fixed_cost]);
+
+        return back()->with('success', 'Biaya tetap bulanan diperbarui.');
+    })->name('finance.fixed-cost');
+});
+
+Route::middleware(['auth', 'role:government'])->prefix('government')->name('government.')->group(function () {
+    Route::get('/dashboard', App\Http\Controllers\Government\DashboardController::class)->name('dashboard');
+
+    Route::get('/programs', [ProgramController::class, 'index'])->name('programs');
+    Route::post('/programs', [ProgramController::class, 'store'])->name('programs.store');
+    Route::patch('/programs/{program}', [ProgramController::class, 'update'])->name('programs.update');
+    Route::delete('/programs/{program}', [ProgramController::class, 'destroy'])->name('programs.destroy');
+    Route::post('/programs/recommend', [ProgramController::class, 'recommend'])->name('programs.recommend');
+
+    Route::get('/policy', [PolicyController::class, 'index'])->name('policy');
+    Route::post('/policy/simulate', [PolicyController::class, 'simulate'])->name('policy.simulate');
+});
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', App\Http\Controllers\Admin\DashboardController::class)->name('dashboard');
+    Route::get('/businesses', [BusinessVerificationController::class, 'index'])->name('businesses');
+    Route::patch('/businesses/{business}', [BusinessVerificationController::class, 'update'])->name('businesses.update');
+    Route::get('/ai-center', AiCenterController::class)->name('ai-center');
 });
