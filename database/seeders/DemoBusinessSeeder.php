@@ -142,13 +142,5 @@ class DemoBusinessSeeder extends Seeder
                 'sent_at' => now()->subDays(2),
             ]);
         }
-
-        // User consumer — bukti middleware role menolak akses dashboard bisnis
-        User::factory()->create([
-            'name' => 'Konsumen Biasa',
-            'email' => 'consumer@grownesia.test',
-            'password' => 'password',
-            'role' => 'consumer',
-        ]);
     }
 }
