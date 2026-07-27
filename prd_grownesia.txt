@@ -1,0 +1,2065 @@
+# Product Requirements Document (PRD)
+# GrowNesia
+## Guest Role (Public User)
+
+**Version:** 1.0  
+**Module:** Guest Experience  
+**Status:** Draft  
+**Owner:** Product Team
+
+---
+
+# 1. Overview
+
+Guest adalah pengguna yang belum memiliki akun atau belum melakukan login ke GrowNesia.
+
+Role ini dirancang agar pengunjung tetap dapat mengeksplorasi platform, memahami manfaat GrowNesia, dan mencoba beberapa fitur AI secara terbatas sebelum memutuskan untuk membuat akun.
+
+Tujuan utama Guest Experience adalah meningkatkan conversion rate dari pengunjung menjadi pengguna terdaftar tanpa mengorbankan keamanan maupun fitur eksklusif yang hanya tersedia bagi pengguna login.
+
+---
+
+# 2. Objectives
+
+- Memperkenalkan GrowNesia kepada pengunjung baru.
+- Memungkinkan pengguna menjelajahi marketplace tanpa login.
+- Memberikan pengalaman AI pertama melalui mode demo.
+- Meningkatkan jumlah registrasi akun.
+- Mengurangi hambatan (friction) saat pertama kali menggunakan platform.
+
+---
+
+# 3. Target User
+
+- Pengunjung baru
+- Calon pembeli
+- Calon Business Account
+- Investor
+- Juri kompetisi
+- Pemerintah
+- Masyarakat umum
+
+---
+
+# 4. Guest Permissions
+
+## Accessible Features
+
+### 4.1 Landing Page
+
+Guest dapat mengakses seluruh halaman landing page.
+
+Fitur:
+
+- Home
+- Features
+- Marketplace
+- Business AI
+- About
+- Contact
+- FAQ
+
+---
+
+### 4.2 Marketplace
+
+Guest dapat menjelajahi seluruh katalog produk.
+
+Fitur:
+
+- Browse Products
+- Search Products
+- Category Filter
+- Price Filter
+- Location Filter
+- Sort Products
+
+Tidak diperbolehkan melakukan pembelian.
+
+---
+
+### 4.3 Product Detail
+
+Guest dapat melihat informasi lengkap produk.
+
+Menampilkan:
+
+- Nama Produk
+- Foto Produk
+- Harga
+- Deskripsi
+- Rating
+- Review
+- Informasi Penjual
+- Estimasi Pengiriman
+- Kategori
+
+---
+
+### 4.4 Business Profile
+
+Guest dapat melihat profil Business Account.
+
+Informasi:
+
+- Nama Usaha
+- Logo
+- Deskripsi
+- Lokasi
+- Produk
+- Rating
+- Story Business
+
+---
+
+### 4.5 AI Shopping Assistant (Demo)
+
+Guest diperbolehkan mencoba AI Shopping Assistant.
+
+Batas penggunaan:
+
+- Maksimal 3 pertanyaan setiap hari.
+
+Contoh:
+
+> Saya mencari hadiah ulang tahun untuk ibu usia 50 tahun.
+
+AI memberikan rekomendasi produk yang sesuai.
+
+Setelah batas penggunaan habis akan muncul ajakan untuk mendaftar.
+
+---
+
+### 4.6 AI Gift Recommendation (Demo)
+
+Guest dapat mencoba AI Gift Recommendation.
+
+Batas:
+
+- Maksimal 2 rekomendasi.
+
+Contoh:
+
+Budget:
+
+Rp300.000
+
+AI menghasilkan:
+
+- Kopi Premium
+- Batik Handmade
+- Tas Anyaman
+
+Total:
+
+Rp295.000
+
+---
+
+### 4.7 AI Product Comparison
+
+Guest dapat membandingkan dua produk.
+
+Contoh:
+
+Kopi Gula Aren
+
+vs
+
+Kopi Klepon
+
+AI menampilkan:
+
+- Harga
+- Rating
+- Bahan
+- Kelebihan
+- Kekurangan
+- Rekomendasi
+
+---
+
+### 4.8 Articles
+
+Guest dapat membaca seluruh artikel.
+
+Kategori:
+
+- Tips UMKM
+- Digital Marketing
+- AI
+- Marketplace
+- Bisnis
+
+---
+
+### 4.9 Events
+
+Guest dapat melihat:
+
+- Event
+- Workshop
+- Webinar
+- Promo
+- Festival UMKM
+
+---
+
+### 4.10 AI Playground
+
+Guest dapat mencoba seluruh kemampuan AI menggunakan data simulasi.
+
+Modul:
+
+- AI Shopping Assistant
+- AI Gift Recommendation
+- AI Product Comparison
+- AI Business Coach Demo
+- AI Product Optimizer Demo
+
+Catatan:
+
+Semua menggunakan data contoh.
+
+Tidak memerlukan akun.
+
+---
+
+# 5. Restricted Features
+
+Guest tidak diperbolehkan mengakses fitur berikut.
+
+| Feature | Status |
+|----------|--------|
+| Add to Cart | ❌ |
+| Wishlist | ❌ |
+| Checkout | ❌ |
+| Payment | ❌ |
+| Order History | ❌ |
+| Reviews | ❌ |
+| AI Personal Shopper | ❌ |
+| Business Dashboard | ❌ |
+| Government Dashboard | ❌ |
+| Super Admin Dashboard | ❌ |
+| Business Registration Dashboard | ❌ |
+
+---
+
+# 6. Login Required Popup
+
+Apabila Guest mencoba fitur yang memerlukan autentikasi, sistem menampilkan dialog login.
+
+## Title
+
+Login Required
+
+## Description
+
+Masuk ke GrowNesia untuk menikmati seluruh fitur dan pengalaman AI yang lebih personal.
+
+## Benefits
+
+- Simpan Produk Favorit
+- Checkout Produk
+- Riwayat Pembelian
+- AI Personal Shopper
+- Promo Eksklusif
+- Rekomendasi AI Berdasarkan Riwayat
+
+## Buttons
+
+Primary
+
+Login
+
+Secondary
+
+Daftar Gratis
+
+---
+
+# 7. Guest User Journey
+
+```text
+Landing Page
+      │
+      ▼
+Marketplace
+      │
+      ▼
+Cari Produk
+      │
+      ▼
+Detail Produk
+      │
+      ▼
+AI Shopping Assistant (Demo)
+      │
+      ▼
+Klik Tambah ke Keranjang
+      │
+      ▼
+Login Required
+      │
+      ▼
+Login / Register
+      │
+      ▼
+Customer Dashboard
+```
+
+---
+
+# 8. AI Playground
+
+## Purpose
+
+Memperkenalkan kemampuan AI GrowNesia kepada pengguna baru.
+
+---
+
+## Available Demo
+
+### AI Shopping Assistant
+
+Contoh Prompt
+
+> Saya mencari oleh-oleh khas Yogyakarta.
+
+---
+
+### AI Gift Recommendation
+
+Contoh Prompt
+
+> Budget saya Rp250.000 untuk hadiah ulang tahun.
+
+---
+
+### AI Product Comparison
+
+Contoh Prompt
+
+Bandingkan:
+
+- Kopi Arabika
+- Kopi Robusta
+
+---
+
+### AI Business Coach Demo
+
+Menggunakan data simulasi.
+
+Contoh Insight
+
+Sales turun 12%.
+
+Rekomendasi:
+
+- Buat Campaign
+- Broadcast WhatsApp
+- Optimasi Produk
+
+---
+
+### AI Product Optimizer Demo
+
+Guest mengunggah gambar contoh.
+
+AI memberikan:
+
+- Product Score
+- Kualitas Foto
+- Deskripsi
+- Saran Perbaikan
+
+---
+
+# 9. Guest Dashboard
+
+Guest tidak memiliki dashboard khusus.
+
+Setelah login pertama kali, pengguna langsung diarahkan ke Customer Dashboard.
+
+---
+
+# 10. Security Rules
+
+Guest tidak memiliki akses ke:
+
+- Data transaksi
+- Data pelanggan
+- Data Business Account
+- Dashboard internal
+- API privat
+- Riwayat pengguna lain
+
+Semua data yang ditampilkan pada AI Playground merupakan data simulasi.
+
+---
+
+# 11. Conversion Strategy
+
+GrowNesia menggunakan pendekatan **Try Before Register**.
+
+Strategi ini memungkinkan Guest mencoba beberapa fitur AI terlebih dahulu sehingga pengguna memahami manfaat platform sebelum diminta membuat akun.
+
+Strategi konversi meliputi:
+
+- Demo AI terbatas
+- Popup Login Required
+- CTA "Get Started Free"
+- AI Playground
+- Marketplace Explorer
+- Artikel dan Event publik
+
+---
+
+# 12. Success Metrics (KPI)
+
+Beberapa metrik yang dapat digunakan untuk mengukur keberhasilan Guest Experience:
+
+- Visitor to Register Conversion Rate
+- AI Playground Usage
+- AI Demo Completion Rate
+- Marketplace Browse Duration
+- Product Detail Views
+- Login Popup Click Rate
+- Registration Completion Rate
+- Bounce Rate Landing Page
+
+---
+
+# 13. Future Enhancements
+
+Fitur yang dapat ditambahkan pada versi berikutnya:
+
+- Guest Recently Viewed Products
+- AI Trending Products
+- Nearby Local Products
+- AI Seasonal Recommendations
+- QR Scan Product Preview
+- Voice Search Demo
+- AI Chat History (Temporary Session)
+- Personalized Landing Experience berdasarkan lokasi pengunjung
+
+
+# Product Requirements Document (PRD)
+# GrowNesia
+## Customer Role
+
+**Version:** 1.0
+
+**Module:** Customer
+
+**Status:** Draft
+
+**Owner:** Product Team
+
+---
+
+# 1. Overview
+
+Customer merupakan pengguna yang telah memiliki akun dan melakukan login ke GrowNesia.
+
+Customer dapat melakukan pembelian produk, menyimpan produk favorit, memperoleh rekomendasi AI yang dipersonalisasi, serta memantau seluruh aktivitas pembelian melalui satu dashboard.
+
+GrowNesia tidak hanya berfungsi sebagai marketplace, tetapi juga sebagai AI Shopping Platform yang membantu pelanggan menemukan produk terbaik sesuai kebutuhan mereka.
+
+---
+
+# 2. Objectives
+
+- Mempermudah pengguna menemukan produk lokal berkualitas.
+- Memberikan pengalaman belanja berbasis AI.
+- Menyediakan rekomendasi produk yang personal.
+- Meningkatkan kepuasan pelanggan.
+- Mendukung pertumbuhan UMKM lokal.
+
+---
+
+# 3. Customer Permissions
+
+Customer memiliki akses penuh terhadap fitur marketplace.
+
+---
+
+# 4. Dashboard
+
+Dashboard menjadi halaman utama setelah login.
+
+Dashboard menampilkan:
+
+- Greeting User
+- Search Bar
+- AI Shopping Assistant
+- Promo
+- Produk Terbaru
+- Produk Populer
+- Rekomendasi AI
+- Riwayat Pembelian
+- Favorite Product
+- Impact Score
+- Notification
+
+---
+
+# 5. Marketplace
+
+Customer dapat
+
+- Search Product
+- Filter Product
+- Sort Product
+- Browse Category
+- View Product Detail
+- View Business Profile
+
+---
+
+# 6. Product Detail
+
+Menampilkan
+
+- Foto Produk
+- Nama Produk
+- Harga
+- Rating
+- Review
+- Deskripsi
+- Variasi
+- Estimasi Pengiriman
+- Informasi Penjual
+
+Action
+
+- Add to Cart
+- Buy Now
+- Favorite
+- Compare Product
+- Share Product
+
+---
+
+# 7. Shopping Cart
+
+Customer dapat
+
+- Menambah produk
+- Menghapus produk
+- Mengubah jumlah produk
+- Menggunakan voucher
+- Menggunakan promo
+- Menghitung ongkir
+- Melihat subtotal
+
+---
+
+# 8. Checkout
+
+Checkout terdiri dari
+
+- Alamat Pengiriman
+- Kurir
+- Metode Pembayaran
+- Ringkasan Pesanan
+- Voucher
+- Catatan Pembeli
+
+---
+
+# 9. Payment
+
+Mendukung
+
+- QRIS
+- Transfer Bank
+- E-Wallet
+- Virtual Account
+
+Status pembayaran
+
+- Pending
+- Paid
+- Failed
+- Refunded
+
+---
+
+# 10. Order Management
+
+Customer dapat melihat
+
+- Pesanan Diproses
+- Dikemas
+- Dikirim
+- Selesai
+- Dibatalkan
+
+---
+
+# 11. Favorite
+
+Customer dapat
+
+- Menyimpan Produk
+- Menghapus Favorit
+- Mengelompokkan Favorit (Future)
+
+---
+
+# 12. Order History
+
+Menampilkan
+
+- Riwayat Pembelian
+- Invoice
+- Status
+- Total Pembayaran
+- Detail Produk
+
+---
+
+# 13. Review
+
+Setelah pesanan selesai
+
+Customer dapat
+
+- Memberikan Rating
+- Menulis Review
+- Upload Foto
+- Upload Video (Future)
+
+---
+
+# 14. Notification Center
+
+Notifikasi
+
+- Pesanan Masuk
+- Pesanan Dikirim
+- Promo Baru
+- Voucher
+- AI Recommendation
+- Flash Sale
+
+---
+
+# 15. AI Shopping Assistant
+
+Customer dapat bertanya menggunakan bahasa alami.
+
+Contoh
+
+> Saya mencari oleh-oleh khas Banyumas.
+
+AI memberikan
+
+- Produk
+- Bundle
+- Budget
+- Alternatif
+
+---
+
+# 16. AI Gift Recommendation
+
+Contoh
+
+Budget
+
+Rp300.000
+
+Untuk
+
+Ibu
+
+Usia
+
+50 Tahun
+
+AI menghasilkan
+
+- Batik
+- Kopi Premium
+- Tas Anyaman
+
+Total
+
+Rp298.000
+
+---
+
+# 17. AI Product Comparison
+
+Customer dapat membandingkan dua produk.
+
+AI membandingkan
+
+- Harga
+- Rating
+- Komposisi
+- Kelebihan
+- Kekurangan
+- Rekomendasi
+
+---
+
+# 18. AI Personal Shopper
+
+AI mempelajari
+
+- Riwayat Pembelian
+- Favorite
+- Pencarian
+- Budget
+- Kategori Favorit
+
+Kemudian memberikan rekomendasi yang lebih personal.
+
+---
+
+# 19. Impact Score
+
+Setelah checkout berhasil
+
+Customer melihat dampak pembelian.
+
+Contoh
+
+🌱
+
+Pembelian Anda membantu
+
+✔ 3 Pekerja Lokal
+
+✔ 1 UMKM
+
+✔ 1 Desa Berkembang
+
+✔ Produk Lokal Indonesia
+
+Tujuan
+
+Memberikan emotional value kepada pelanggan.
+
+---
+
+# 20. Profile
+
+Customer dapat
+
+- Edit Profil
+- Ubah Password
+- Kelola Alamat
+- Kelola Nomor HP
+- Kelola Email
+- Logout
+
+---
+
+# 21. Security
+
+Customer hanya dapat melihat
+
+- Data miliknya sendiri
+- Riwayat miliknya
+- Favorit miliknya
+
+Tidak dapat mengakses
+
+- Dashboard Business
+- Dashboard Government
+- Dashboard Super Admin
+
+---
+
+# 22. Success Metrics
+
+- Conversion Rate
+- Checkout Success Rate
+- AI Shopping Usage
+- AI Recommendation Click Rate
+- Repeat Purchase Rate
+- Favorite Usage
+- Average Order Value
+- Customer Retention
+
+---
+
+# 23. Future Enhancements
+
+- AI Voice Shopping
+- AI Live Shopping Assistant
+- AR Product Preview
+- AI Outfit Recommendation
+- AI Food Pairing Recommendation
+- Loyalty Point
+- Membership
+- Subscription Product
+- Group Buying
+- Referral Program
+
+# Product Requirements Document (PRD)
+# GrowNesia
+## Business Account
+
+**Version:** 1.0
+
+**Module:** Business Account
+
+**Status:** Draft
+
+**Owner:** Product Team
+
+---
+
+# 1. Overview
+
+Business Account merupakan pusat operasional digital bagi pelaku usaha.
+
+Role ini dirancang untuk membantu UMKM, Supplier, Distributor, BUMDes, Koperasi, maupun Reseller dalam mengelola bisnis secara end-to-end menggunakan Artificial Intelligence.
+
+GrowNesia tidak hanya menyediakan marketplace, tetapi juga menjadi Business Growth Platform yang membantu meningkatkan penjualan, efisiensi operasional, pemasaran, dan pengambilan keputusan.
+
+---
+
+# 2. Target User
+
+Business Account dapat digunakan oleh:
+
+- UMKM
+- Supplier
+- Distributor
+- BUMDes
+- Koperasi
+- Reseller
+
+---
+
+# 3. Objectives
+
+Business Account bertujuan untuk:
+
+- Mempermudah pengelolaan bisnis.
+- Mengotomatisasi pekerjaan menggunakan AI.
+- Membantu meningkatkan penjualan.
+- Mengurangi pekerjaan manual.
+- Memberikan insight bisnis secara real-time.
+- Mendukung transformasi digital UMKM Indonesia.
+
+---
+
+# 4. Dashboard
+
+Dashboard merupakan halaman utama setelah Business Login.
+
+Dashboard menampilkan ringkasan performa bisnis.
+
+Menampilkan:
+
+- Total Revenue
+- Total Orders
+- Total Customers
+- Total Products
+- Low Stock Products
+- Business Score
+- AI Insight
+- Active Campaign
+- Today's Sales
+- Monthly Revenue
+- Revenue Chart
+- Recent Orders
+- Notifications
+
+Quick Actions
+
+- Add Product
+- Generate Marketing
+- Create Campaign
+- Broadcast WhatsApp
+- View Analytics
+
+---
+
+# 5. Business Profile
+
+Business dapat mengelola:
+
+- Logo
+- Banner
+- Business Name
+- Description
+- Address
+- Contact
+- WhatsApp
+- Instagram
+- Facebook
+- TikTok
+- Website
+- Operating Hours
+- Business Category
+
+---
+
+# 6. Product Management
+
+Business dapat:
+
+- Add Product
+- Edit Product
+- Delete Product
+- Archive Product
+- Duplicate Product
+
+Informasi produk:
+
+- Nama
+- Harga
+- SKU
+- Stok
+- Berat
+- Deskripsi
+- Kategori
+- Foto
+- Video (Future)
+- Variasi
+- Status
+
+---
+
+# 7. AI Product Optimizer
+
+AI otomatis mengevaluasi produk.
+
+Contoh analisis:
+
+Product Score
+
+92 /100
+
+Analisis:
+
+✓ Foto produk jelas
+
+⚠ Deskripsi terlalu pendek
+
+⚠ Kata kunci kurang optimal
+
+Saran:
+
+- Tambahkan manfaat produk.
+- Gunakan foto dengan pencahayaan lebih baik.
+- Tambahkan kata kunci lokal.
+
+Tombol
+
+Optimize with AI
+
+---
+
+# 8. Order Management
+
+Business dapat:
+
+- View Orders
+- Accept Order
+- Reject Order
+- Process Order
+- Ship Order
+- Complete Order
+- Cancel Order
+
+Filter:
+
+- Pending
+- Processing
+- Shipping
+- Completed
+- Cancelled
+
+---
+
+# 9. Inventory Management
+
+Mengelola:
+
+- Stock
+- Stock Movement
+- Stock History
+- Low Stock Alert
+- Restock Reminder
+
+---
+
+# 10. AI Inventory Prediction
+
+AI memprediksi kebutuhan stok.
+
+Contoh:
+
+Produk
+
+Kopi Arabika
+
+Prediksi
+
+Stock akan habis dalam 4 hari.
+
+Saran
+
+Restock minimal 120 pcs minggu ini.
+
+Confidence
+
+96%
+
+---
+
+# 11. AI Business Coach
+
+AI menganalisis seluruh performa bisnis.
+
+Contoh
+
+Hari ini ditemukan:
+
+Sales turun 12%
+
+Tidak ada campaign aktif
+
+Produk A mengalami penurunan
+
+Rekomendasi
+
+- Buat Campaign
+- Broadcast WhatsApp
+- Diskon Weekend
+- Tambah Produk Baru
+
+---
+
+# 12. AI Marketing Center
+
+Business dapat menghasilkan konten pemasaran otomatis.
+
+AI dapat membuat:
+
+- Caption Instagram
+- WhatsApp Broadcast
+- Facebook Post
+- Banner
+- Poster
+- Story
+- Product Description
+- Product Title
+- Hashtag
+- Campaign Copy
+
+Input
+
+Nama Produk
+
+Target Audience
+
+Promo
+
+Tone
+
+Output
+
+Konten siap digunakan.
+
+---
+
+# 13. Omnichannel Marketing
+
+Business dapat menghubungkan berbagai platform.
+
+Integrasi
+
+- WhatsApp Business
+- Instagram
+- Facebook
+- TikTok (Future)
+- Telegram (Future)
+- Email (Future)
+
+Fitur
+
+- Broadcast
+- Scheduled Post
+- Auto Reply
+- Campaign Management
+- Content Calendar
+- Marketing Performance
+
+---
+
+# 14. Customer Management
+
+Melihat:
+
+- Customer List
+- Customer History
+- Repeat Customer
+- Favorite Customer
+- Customer Segment
+
+---
+
+# 15. AI Customer Insight
+
+AI membantu memahami pelanggan.
+
+Contoh
+
+Pelanggan usia 20–30 tahun lebih sering membeli produk kopi premium.
+
+Saran
+
+Buat promo "Buy 2 Get 1".
+
+---
+
+# 16. AI Financial Assistant
+
+Membantu analisis keuangan.
+
+Menampilkan:
+
+- Revenue
+- Profit
+- Expense
+- Margin
+- Cash Flow
+- Break Even Point (BEP)
+
+AI memberikan:
+
+- Prediksi pendapatan
+- Estimasi keuntungan
+- Peringatan cash flow
+- Rekomendasi efisiensi biaya
+
+---
+
+# 17. Business Analytics
+
+Dashboard analitik menampilkan:
+
+- Revenue
+- Orders
+- Conversion Rate
+- Best Selling Product
+- Worst Selling Product
+- Customer Growth
+- Repeat Purchase
+- Campaign Performance
+
+---
+
+# 18. Campaign Management
+
+Business dapat membuat:
+
+- Discount
+- Voucher
+- Flash Sale
+- Bundle Product
+- Seasonal Promotion
+
+---
+
+# 19. Review Management
+
+Melihat:
+
+- Rating
+- Review
+- AI Sentiment Analysis
+
+AI mengelompokkan review menjadi:
+
+- Positive
+- Neutral
+- Negative
+
+---
+
+# 20. Notification Center
+
+Notifikasi:
+
+- Order Baru
+- Stock Menipis
+- Campaign Berakhir
+- AI Insight
+- Broadcast Selesai
+- Pembayaran Masuk
+
+---
+
+# 21. Business Score
+
+AI menghitung skor bisnis berdasarkan:
+
+- Kelengkapan Profil
+- Kualitas Produk
+- Kecepatan Respon
+- Kepuasan Pelanggan
+- Performa Penjualan
+- Aktivitas Marketing
+
+Output
+
+Business Score
+
+0–100
+
+Disertai rekomendasi peningkatan.
+
+---
+
+# 22. Security
+
+Business hanya dapat mengakses:
+
+- Data bisnis miliknya
+- Produk miliknya
+- Pelanggan miliknya
+- Transaksi miliknya
+
+Tidak dapat mengakses:
+
+- Data Business lain
+- Dashboard Government
+- Dashboard Super Admin
+
+---
+
+# 23. KPI
+
+- Revenue Growth
+- Sales Growth
+- AI Usage Rate
+- Campaign Performance
+- Customer Retention
+- Product Performance
+- Inventory Accuracy
+- Business Score Improvement
+
+---
+
+# 24. Future Enhancements
+
+- AI Dynamic Pricing
+- AI Competitor Analysis
+- AI Demand Forecast
+- AI Sales Forecast
+- AI Supplier Recommendation
+- AI Fraud Detection
+- AI Customer Churn Prediction
+- AI Voice Business Assistant
+- AI Meeting Summary
+- AI Invoice Scanner
+- AI Smart Procurement
+
+# Product Requirements Document (PRD)
+# GrowNesia
+## Super Admin
+
+**Version:** 1.0
+
+**Module:** Super Admin
+
+**Status:** Draft
+
+**Owner:** Product Team
+
+---
+
+# 1. Overview
+
+Super Admin merupakan pengelola utama platform GrowNesia.
+
+Role ini bertanggung jawab terhadap operasional platform, pengelolaan pengguna, verifikasi Business Account, monitoring aktivitas sistem, pengelolaan AI, hingga integrasi layanan pihak ketiga.
+
+Super Admin memiliki akses penuh terhadap seluruh data dan konfigurasi sistem.
+
+---
+
+# 2. Objectives
+
+Super Admin bertujuan untuk:
+
+- Mengelola seluruh pengguna platform.
+- Memastikan kualitas Business Account.
+- Menjaga keamanan platform.
+- Mengelola modul AI.
+- Mengelola konten platform.
+- Memantau kesehatan sistem.
+- Mengelola integrasi eksternal.
+
+---
+
+# 3. Dashboard
+
+Dashboard merupakan pusat monitoring GrowNesia.
+
+Menampilkan KPI utama.
+
+Dashboard berisi:
+
+- Total Users
+- Total Customers
+- Total Business Accounts
+- Total Products
+- Total Orders
+- Total Transactions
+- AI Requests Today
+- Active Users
+- Pending Verifications
+- Open Reports
+- Server Status
+- Revenue Summary
+- Daily Growth
+- Monthly Growth
+
+Grafik:
+
+- User Growth
+- Transaction Growth
+- AI Usage
+- Business Registration
+- Product Growth
+
+Quick Actions
+
+- Verify Business
+- View Reports
+- Manage Users
+- Publish Announcement
+- AI Monitoring
+
+---
+
+# 4. User Management
+
+Super Admin dapat mengelola seluruh akun.
+
+Jenis akun:
+
+- Guest (Monitoring)
+- Customer
+- Business Account
+- Government
+- Super Admin
+
+Fitur:
+
+- Search User
+- View Profile
+- Edit User
+- Suspend User
+- Activate User
+- Delete User
+- Reset Password
+- View Activity Log
+
+---
+
+# 5. Business Verification
+
+Business Account wajib diverifikasi.
+
+Status:
+
+- Pending
+- Verified
+- Rejected
+- Suspended
+
+Data yang diverifikasi:
+
+- Nama Usaha
+- Legalitas (jika ada)
+- Alamat
+- Nomor Telepon
+- Logo
+- Produk
+
+Aksi:
+
+- Approve
+- Reject
+- Request Revision
+
+---
+
+# 6. Product Moderation
+
+Super Admin dapat:
+
+- View Products
+- Hide Product
+- Delete Product
+- Restore Product
+- Flag Product
+
+Alasan:
+
+- Spam
+- Illegal
+- Duplicate
+- Inappropriate Content
+- Copyright
+
+---
+
+# 7. Order Monitoring
+
+Melihat seluruh transaksi.
+
+Filter:
+
+- Pending
+- Paid
+- Shipping
+- Completed
+- Cancelled
+- Refunded
+
+Super Admin tidak dapat mengubah isi transaksi, hanya melakukan monitoring dan tindakan administratif jika diperlukan.
+
+---
+
+# 8. AI Management
+
+Mengelola seluruh layanan AI.
+
+Monitoring:
+
+- Total AI Requests
+- AI Success Rate
+- AI Error Rate
+- Average Response Time
+- Token Usage (jika menggunakan LLM)
+- AI Cost Estimation
+
+Modul AI:
+
+- AI Business Coach
+- AI Shopping Assistant
+- AI Marketing Center
+- AI Product Optimizer
+- AI Financial Assistant
+
+Fitur:
+
+- Enable / Disable Module
+- Configure Prompt Template
+- View AI Logs
+- Retry Failed Requests
+
+---
+
+# 9. Content Management System (CMS)
+
+Mengelola konten publik.
+
+Konten:
+
+- Landing Page
+- Banner
+- Promo
+- Event
+- Artikel
+- FAQ
+- Announcement
+
+Aksi:
+
+- Create
+- Edit
+- Publish
+- Archive
+- Delete
+
+---
+
+# 10. Integration Center
+
+Mengelola integrasi pihak ketiga.
+
+Integrasi:
+
+- WhatsApp Business API
+- Instagram API
+- Facebook Graph API
+- Payment Gateway
+- Shipping Provider
+- Email Service
+- Push Notification Service
+
+Status:
+
+- Connected
+- Disconnected
+- Error
+
+---
+
+# 11. Notification Management
+
+Mengelola notifikasi global.
+
+Jenis:
+
+- System Announcement
+- Maintenance
+- Security Alert
+- Business Notification
+- Marketing Broadcast
+
+Target:
+
+- All Users
+- Customers
+- Business Accounts
+- Government
+
+---
+
+# 12. Reports & Analytics
+
+Dashboard analitik platform.
+
+Menampilkan:
+
+- User Growth
+- Active Businesses
+- Total Revenue
+- Order Trends
+- Product Categories
+- AI Usage Trends
+- Top Performing Businesses
+- Customer Retention
+
+Export:
+
+- PDF
+- Excel
+- CSV
+
+---
+
+# 13. Security Center
+
+Monitoring keamanan.
+
+Fitur:
+
+- Failed Login Attempts
+- Suspicious Activities
+- Device Sessions
+- Login History
+- IP Monitoring
+- Audit Log
+
+Aksi:
+
+- Force Logout
+- Lock Account
+- Block IP
+- Reset Session
+
+---
+
+# 14. Platform Settings
+
+Konfigurasi sistem.
+
+Pengaturan:
+
+- General Settings
+- Branding
+- Logo
+- Theme
+- Email Configuration
+- AI Configuration
+- Payment Configuration
+- Tax Settings
+- Shipping Settings
+
+---
+
+# 15. Role & Permission Management
+
+Mengelola hak akses.
+
+Role:
+
+- Customer
+- Business Account
+- Government
+- Super Admin
+
+Fitur:
+
+- Create Role
+- Edit Permission
+- Assign Permission
+- Remove Permission
+
+---
+
+# 16. Audit Log
+
+Semua aktivitas penting dicatat.
+
+Contoh:
+
+- Login
+- Logout
+- Edit User
+- Delete Product
+- Verify Business
+- Publish Content
+- AI Configuration Changes
+
+Filter:
+
+- User
+- Date
+- Module
+- Activity Type
+
+---
+
+# 17. AI Platform Insight
+
+AI menganalisis performa platform secara keseluruhan.
+
+Contoh Insight:
+
+- Jumlah Business Account meningkat 14% bulan ini.
+- Kategori Makanan memiliki pertumbuhan transaksi tertinggi.
+- Aktivitas AI Marketing meningkat menjelang akhir pekan.
+- Tingkat konversi Customer dari Guest mencapai 18%.
+
+Rekomendasi:
+
+- Tambahkan kampanye untuk kategori Kerajinan.
+- Tingkatkan kapasitas AI pada jam sibuk.
+- Promosikan Business Account baru di halaman utama.
+
+---
+
+# 18. Security
+
+Super Admin memiliki akses penuh.
+
+Namun seluruh aktivitas wajib dicatat pada Audit Log.
+
+Aksi sensitif memerlukan:
+
+- Konfirmasi
+- Two-Factor Authentication (Future)
+- Approval Workflow (Future)
+
+---
+
+# 19. KPI
+
+Metrik utama:
+
+- Active Users
+- Active Business Accounts
+- Platform Uptime
+- AI Availability
+- AI Response Time
+- User Retention
+- Verification Time
+- Average Resolution Time
+- Transaction Success Rate
+
+---
+
+# 20. Future Enhancements
+
+- AI Fraud Detection
+- AI Moderation Assistant
+- AI Abuse Detection
+- AI Customer Support Monitoring
+- Predictive Server Scaling
+- AI Security Monitoring
+- AI Content Moderation
+- Multi-Tenant Platform Management
+- Feature Flag Management
+- Real-Time Operational Dashboard
+
+                GrowNesia AI Core
+                        │
+        ┌───────────────┼───────────────┐
+        │               │               │
+ Customer AI      Business AI      Platform AI
+        │               │               │
+ Shopping       Business Coach     Platform Insight
+ Gift AI        Marketing AI
+ Comparison     Financial AI
+ Personal AI    Inventory AI
+                Product AI
+
+# Product Requirements Document (PRD)
+# GrowNesia
+## AI Core Module
+
+**Version:** 1.0
+
+**Module:** AI Core
+
+**Status:** Draft
+
+**Owner:** AI Team
+
+---
+
+# 1. Overview
+
+GrowNesia AI Core merupakan layanan Artificial Intelligence utama yang digunakan oleh seluruh modul di dalam platform GrowNesia.
+
+AI Core bertanggung jawab untuk menganalisis data, menghasilkan rekomendasi, membuat konten, melakukan prediksi, hingga membantu pengambilan keputusan berdasarkan data pengguna.
+
+Semua modul AI menggunakan AI Core sebagai pusat pemrosesan.
+
+---
+
+# 2. Objectives
+
+AI Core bertujuan untuk:
+
+- Memberikan pengalaman AI yang konsisten.
+- Mengurangi kompleksitas sistem.
+- Mempermudah pengembangan fitur AI baru.
+- Menghasilkan rekomendasi berbasis data.
+- Membantu seluruh role dalam mengambil keputusan.
+
+---
+
+# 3. AI Architecture
+
+AI Core melayani:
+
+Customer
+
+Business Account
+
+Government
+
+Super Admin
+
+Melalui satu layanan AI terpadu.
+
+---
+
+# 4. AI Modules
+
+GrowNesia AI Core terdiri dari beberapa engine.
+
+## Customer AI
+
+- Shopping Assistant
+- Gift Recommendation
+- Product Comparison
+- Personal Shopper
+
+---
+
+## Business AI
+
+- Business Coach
+- Product Optimizer
+- Inventory Prediction
+- Customer Insight
+- Marketing Center
+- Financial Assistant
+
+---
+
+## Government AI
+
+- Economic Insight
+- Program Recommendation
+- Policy Simulation
+
+---
+
+## Platform AI
+
+- Platform Insight
+- AI Monitoring
+- AI Moderation
+
+---
+
+# 5. AI Request Flow
+
+Setiap permintaan AI mengikuti alur berikut.
+
+User Request
+
+↓
+
+Validation
+
+↓
+
+Collect Context
+
+↓
+
+Prompt Builder
+
+↓
+
+AI Processing
+
+↓
+
+Response Formatter
+
+↓
+
+Response
+
+↓
+
+Logging
+
+↓
+
+Analytics
+
+---
+
+# 6. Context Builder
+
+Sebelum AI memberikan jawaban, sistem mengumpulkan konteks yang relevan.
+
+Contoh:
+
+Customer
+
+- Riwayat pencarian
+- Riwayat pembelian
+- Wishlist
+- Budget
+- Lokasi
+
+Business
+
+- Penjualan
+- Produk
+- Inventori
+- Campaign
+- Customer
+
+Government
+
+- Statistik wilayah
+- Data transaksi agregat
+- Pertumbuhan UMKM
+
+---
+
+# 7. Prompt Builder
+
+Prompt Builder bertugas menyusun instruksi yang akan dikirim ke AI.
+
+Prompt terdiri dari:
+
+System Prompt
+
+User Prompt
+
+Business Context
+
+Platform Rules
+
+Output Format
+
+---
+
+# 8. AI Response
+
+Semua output AI memiliki format yang konsisten.
+
+Contoh
+
+Summary
+
+Recommendation
+
+Reason
+
+Confidence Level
+
+Next Action
+
+---
+
+# 9. Confidence Score
+
+Setiap rekomendasi AI memiliki tingkat keyakinan.
+
+Contoh
+
+Confidence
+
+95%
+
+Level
+
+High
+
+---
+
+# 10. AI Memory
+
+AI dapat mengingat preferensi pengguna.
+
+Contoh
+
+Customer
+
+- Budget
+- Produk favorit
+- Kategori favorit
+
+Business
+
+- Campaign favorit
+- Target market
+- Produk utama
+
+---
+
+# 11. AI Logging
+
+Semua request dicatat.
+
+Data:
+
+- User
+- Role
+- Module
+- Prompt
+- Response
+- Response Time
+- Status
+
+---
+
+# 12. AI Analytics
+
+Menampilkan:
+
+- Total AI Request
+- AI Success Rate
+- Average Response Time
+- AI Usage by Module
+- Daily Usage
+- Monthly Usage
+
+---
+
+# 13. AI Guardrails
+
+AI wajib:
+
+- Tidak menghasilkan konten berbahaya.
+- Tidak membocorkan data pengguna lain.
+- Memberikan rekomendasi berdasarkan data yang tersedia.
+- Menampilkan penjelasan yang mudah dipahami.
+
+---
+
+# 14. Error Handling
+
+Jika AI gagal menjawab.
+
+Sistem menampilkan:
+
+"Maaf, AI sedang tidak tersedia. Silakan coba beberapa saat lagi."
+
+Seluruh error dicatat pada AI Log.
+
+---
+
+# 15. API Design
+
+Contoh endpoint:
+
+POST /api/ai/chat
+
+POST /api/ai/business-coach
+
+POST /api/ai/product-optimizer
+
+POST /api/ai/inventory
+
+POST /api/ai/marketing
+
+POST /api/ai/financial
+
+POST /api/ai/comparison
+
+POST /api/ai/gift
+
+POST /api/ai/personal-shopper
+
+---
+
+# 16. Performance Target
+
+Response Time
+
+< 5 detik
+
+Availability
+
+99%
+
+Scalable
+
+Horizontal Scaling Ready
+
+---
+
+# 17. Security
+
+Semua request AI:
+
+- Memerlukan autentikasi (kecuali AI Playground)
+- Menggunakan HTTPS
+- Memiliki rate limiting
+- Menyimpan log secara aman
+- Memisahkan data antar pengguna (tenant isolation)
+
+---
+
+# 18. Future Enhancements
+
+- AI Voice Assistant
+- AI Image Analysis
+- AI OCR untuk invoice
+- AI Video Content Generator
+- AI Predictive Analytics
+- AI Sales Forecasting
+- AI Customer Churn Prediction
+- AI Dynamic Pricing
+- AI Competitor Monitoring
+- AI Recommendation Engine 2.0
