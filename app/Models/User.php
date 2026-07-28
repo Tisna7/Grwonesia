@@ -25,6 +25,11 @@ class User extends Authenticatable
         'password',
         'role',
         'phone',
+        'status',
+        'google_id',
+        'avatar',
+        'verification_code',
+        'verification_expires_at',
     ];
 
     /**
@@ -35,6 +40,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'verification_code',
     ];
 
     /**
@@ -46,6 +52,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'verification_expires_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
         ];
@@ -59,6 +66,11 @@ class User extends Authenticatable
     public function isBusiness(): bool
     {
         return $this->role === UserRole::Business;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->status === 'terverifikasi' || !is_null($this->email_verified_at);
     }
 
     public function getDashboardRouteName(): string

@@ -21,7 +21,24 @@ class GrownesiaController extends Controller
     public function dashboard()
     {
         if (Auth::check()) {
-            $dashboardRoute = Auth::user()->getDashboardRouteName();
+            $user = Auth::user();
+            if (! $user->isVerified()) {
+                session([
+                    'pending_verification_user_id' => $user->id,
+                    'pending_verification_email' => $user->email,
+                ]);
+
+                Auth::logout();
+
+                return redirect()->route('verification.notice')
+                    ->with('info', 'Email Anda belum diverifikasi. Silakan masukkan 6-digit kode OTP yang telah dikirimkan ke Gmail Anda.');
+            }
+
+            if (is_null($user->email_verified_at) && $user->status === 'terverifikasi') {
+                $user->update(['email_verified_at' => now()]);
+            }
+
+            $dashboardRoute = $user->getDashboardRouteName();
             if ($dashboardRoute !== 'user.dashboard') {
                 return redirect()->route($dashboardRoute);
             }
