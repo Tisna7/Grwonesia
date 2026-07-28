@@ -37,6 +37,9 @@
                 <a href="{{ route('business.orders.index') }}" class="sidebar-link {{ request()->routeIs('business.orders.*') ? 'active' : '' }}">
                     <x-icon name="file-text"/> Pesanan
                 </a>
+                <a href="{{ route('business.shipping.index') }}" class="sidebar-link {{ request()->routeIs('business.shipping.*') ? 'active' : '' }}">
+                    <x-icon name="truck"/> Pengiriman
+                </a>
             </div>
 
             <p class="section-label">AI Tools</p>

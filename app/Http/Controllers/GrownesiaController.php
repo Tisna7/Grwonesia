@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,7 +26,7 @@ class GrownesiaController extends Controller
                 return redirect()->route($dashboardRoute);
             }
         }
-        $dbProducts = \App\Models\Product::with('business')->active()->latest()->get();
+        $dbProducts = Product::with('business')->active()->latest()->get();
 
         if ($dbProducts->isNotEmpty()) {
             $products = $dbProducts->map(function ($p) {
@@ -40,13 +43,6 @@ class GrownesiaController extends Controller
                     'kerajinan' => 'Kerajinan & Craft',
                     default => 'Makanan Ringan',
                 };
-
-                $images = [
-                    'kopi' => '/images/products/kopi_gula_aren.png',
-                    'batik' => '/images/products/batik_solo.png',
-                    'kerajinan' => '/images/products/tas_anyaman.png',
-                    'makanan' => '/images/products/keripik_kopi.png',
-                ];
 
                 return [
                     'id' => $p->id,
@@ -178,6 +174,126 @@ class GrownesiaController extends Controller
             'email' => 'budi@grownesia.id',
         ];
 
-        return view('grownesia.dashboard', compact('products', 'user'));
+        // Fetch real database orders for the customer/user
+        $userEmail = Auth::user()?->email ?? 'budi@grownesia.id';
+        $dbOrders = Order::with(['business', 'items.product', 'customer'])
+            ->whereHas('customer', function ($q) use ($userEmail) {
+                $q->where('email', $userEmail);
+            })
+            ->latest('ordered_at')
+            ->latest('id')
+            ->get();
+
+        if ($dbOrders->isEmpty()) {
+            // Fallback to recent orders in DB so live tracking is always populated for demonstration
+            $dbOrders = Order::with(['business', 'items.product', 'customer'])
+                ->latest('ordered_at')
+                ->latest('id')
+                ->take(5)
+                ->get();
+        }
+
+        $ordersHistory = $dbOrders->map(fn($o) => $this->formatOrderForFrontend($o))->values()->toArray();
+
+        return view('grownesia.dashboard', compact('products', 'user', 'ordersHistory'));
+    }
+
+    public function getShippingStatus(Order $order): JsonResponse
+    {
+        $order->load(['business', 'items.product', 'customer']);
+        return response()->json([
+            'success' => true,
+            'order' => $this->formatOrderForFrontend($order),
+        ]);
+    }
+
+    private function formatOrderForFrontend(Order $order): array
+    {
+        $firstItem = $order->items->first();
+        $itemsSummary = $order->items->map(function ($item) {
+            return $item->product_name . ' (' . $item->quantity . 'x)';
+        })->join(', ');
+
+        $rawStatus = strtolower($order->shipping_status ?? 'pending');
+        $displayStatus = match($rawStatus) {
+            'delivered', 'selesai' => 'Selesai',
+            'shipped', 'in_transit', 'out_for_delivery', 'dalam pengiriman' => 'Dalam Pengiriman',
+            'packed' => 'Dikemas',
+            'cancelled' => 'Dibatalkan',
+            'return' => 'Dikembalikan',
+            default => 'Diproses',
+        };
+
+        $shippingStatusBadge = match($rawStatus) {
+            'delivered' => 'Delivered',
+            'shipped' => 'Out For Delivery',
+            'packed' => 'Order Packed',
+            'pending' => 'Pending Pickup',
+            'cancelled' => 'Cancelled',
+            'return' => 'Return',
+            default => ucfirst($rawStatus),
+        };
+
+        $courier = $order->courier ?: 'JNE Express';
+        $courierParts = explode(' ', trim($courier));
+        $courierLogo = strtoupper($courierParts[0] ?: 'JNE');
+
+        $timeline = $order->shipping_timeline;
+        if (empty($timeline) || !is_array($timeline)) {
+            $timeline = [
+                [
+                    'time' => $order->ordered_at ? $order->ordered_at->format('d M, H:i') : now()->format('d M, H:i'),
+                    'location' => $order->business?->city ?? 'Gudang Penjual',
+                    'desc' => 'Order Confirmed',
+                    'icon' => 'check',
+                    'done' => true,
+                ],
+                [
+                    'time' => $order->updated_at ? $order->updated_at->format('d M, H:i') : now()->format('d M, H:i'),
+                    'location' => $order->current_location ?: ($order->business?->city ?: 'Gudang Penjual'),
+                    'desc' => 'Status: ' . $displayStatus,
+                    'icon' => 'package',
+                    'done' => in_array($rawStatus, ['packed', 'shipped', 'delivered']),
+                ],
+            ];
+        } else {
+            $timeline = array_map(function ($t) {
+                return [
+                    'time' => $t['timestamp'] ?? ($t['time'] ?? now()->format('d M, H:i')),
+                    'location' => $t['location'] ?? '',
+                    'desc' => $t['title'] ?? ($t['description'] ?? ($t['desc'] ?? '')),
+                    'icon' => $t['icon'] ?? 'check',
+                    'done' => true,
+                ];
+            }, $timeline);
+        }
+
+        return [
+            'id' => $order->order_number ?: ('GRW-' . $order->id),
+            'db_id' => $order->id,
+            'date' => $order->ordered_at ? $order->ordered_at->format('d F Y') : $order->created_at->format('d F Y'),
+            'productId' => $firstItem?->product_id ?? 1,
+            'productName' => $firstItem?->product_name ?? 'Produk UMKM',
+            'items' => $itemsSummary ?: 'Produk UMKM',
+            'total' => (float) $order->total,
+            'status' => $displayStatus,
+            'shippingStatus' => $shippingStatusBadge,
+            'courier' => $courier,
+            'courierLogo' => $courierLogo,
+            'trackingNumber' => $order->tracking_number ?: 'Menunggu No. Resi',
+            'currentLocation' => $order->current_location ?: ($order->business?->city ?: 'Gudang Penjual'),
+            'lastUpdated' => $order->updated_at ? $order->updated_at->diffForHumans() : 'Baru saja',
+            'estimatedArrival' => $order->estimated_arrival ?: '2-3 Hari Kerja',
+            'businessName' => $order->business?->name ?? 'UMKM Mitra',
+            'shippingAddress' => $order->shipping_address ?: ($order->customer?->city ?: 'Jl. Sudirman No. 45, Jakarta'),
+            'shippingCost' => (float) ($order->shipping_cost ?? 0),
+            'paymentMethod' => 'Marketplace Payment',
+            'productImage' => $firstItem?->product?->image_url ?? '/images/products/kopi_gula_aren.png',
+            'aiInsight' => 'Pengiriman dipantau secara real-time dari sistem logistik penjual ' . ($order->business?->name ?? 'UMKM') . '.',
+            'aiConfidence' => '98%',
+            'impact' => 'Pemberdayaan UMKM & Pekerja Lokal',
+            'reviewed' => false,
+            'timeline' => $timeline,
+        ];
     }
 }

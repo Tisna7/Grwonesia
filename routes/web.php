@@ -46,6 +46,7 @@ Route::match(['get', 'post'], '/switch-role/{role}', [AuthController::class, 'sw
 
 // Logged-in User Dashboard & Checkout
 Route::get('/dashboard', [GrownesiaController::class, 'dashboard'])->middleware('auth')->name('user.dashboard');
+Route::get('/user/shipping/{order}', [GrownesiaController::class, 'getShippingStatus'])->middleware('auth')->name('user.shipping.status');
 Route::post('/checkout', [\App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
 
 Route::middleware(['auth', 'role:business'])->prefix('business')->name('business.')->group(function () {
@@ -58,6 +59,9 @@ Route::middleware(['auth', 'role:business'])->prefix('business')->name('business
 
     Route::resource('orders', OrderController::class)->only(['index', 'create', 'store', 'show']);
     Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+
+    Route::get('/shipping', [\App\Http\Controllers\Business\ShippingController::class, 'index'])->name('shipping.index');
+    Route::patch('/shipping/{order}', [\App\Http\Controllers\Business\ShippingController::class, 'update'])->name('shipping.update');
 
     Route::get('/inventory', InventoryController::class)->name('inventory');
 
