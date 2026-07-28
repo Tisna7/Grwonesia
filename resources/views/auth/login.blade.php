@@ -24,6 +24,14 @@
         <p class="text-xs text-purple-300/70">Silakan masukkan email dan kata sandi yang telah terdaftar di database.</p>
     </div>
 
+    <!-- Success / Info Alert -->
+    @if (session('success'))
+        <div class="p-3.5 rounded-2xl bg-emerald-950/70 border border-emerald-500/40 text-emerald-200 text-xs font-semibold flex items-center gap-2 shadow-lg">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
     <!-- Error Alerts -->
     @if ($errors->any())
         <div class="p-3.5 rounded-2xl bg-red-950/70 border border-red-500/40 text-red-200 text-xs space-y-1 shadow-lg">

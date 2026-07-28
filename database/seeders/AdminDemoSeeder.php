@@ -11,12 +11,14 @@ class AdminDemoSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Super Admin Grownesia',
-            'email' => 'admin@grownesia.test',
-            'password' => 'password',
-            'role' => 'admin',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@grownesia.test'],
+            [
+                'name' => 'Super Admin Grownesia',
+                'password' => 'password',
+                'role' => 'admin',
+            ]
+        );
 
         // Status verifikasi campuran agar halaman verifikasi berisi
         $businesses = Business::orderBy('id')->get();

@@ -205,6 +205,26 @@
         transform: none;
     }
 
+    .btn-primary-purple {
+        background: #7C3AED;
+        color: #FFFFFF;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 14px 0 rgba(124, 58, 237, 0.39);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-primary-purple:hover {
+        background: #6D28D9;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px 0 rgba(124, 58, 237, 0.6);
+    }
+
     .btn-secondary {
         display: inline-flex;
         align-items: center;

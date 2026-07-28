@@ -17,23 +17,31 @@ class DemoBusinessSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::factory()->create([
-            'name' => 'Demo UMKM',
-            'email' => 'demo@grownesia.test',
-            'password' => 'password',
-            'role' => 'business',
-            'phone' => '6281234567890',
-        ]);
+        $user = User::firstOrCreate(
+            ['email' => 'demo@grownesia.test'],
+            [
+                'name' => 'Demo UMKM',
+                'password' => 'password',
+                'role' => 'business',
+                'phone' => '6281234567890',
+            ]
+        );
 
-        $business = Business::factory()->create([
-            'user_id' => $user->id,
-            'name' => 'Kopi & Keripik Nusantara',
-            'slug' => 'kopi-keripik-nusantara',
-            'category' => 'Kuliner',
-            'description' => 'UMKM olahan kopi lokal dan camilan khas Jawa Barat, memberdayakan petani dan pekerja desa.',
-            'city' => 'Sukabumi',
-            'monthly_fixed_cost' => 4500000,
-        ]);
+        $business = Business::firstOrCreate(
+            ['slug' => 'kopi-keripik-nusantara'],
+            [
+                'user_id' => $user->id,
+                'name' => 'Kopi & Keripik Nusantara',
+                'category' => 'Kuliner',
+                'description' => 'UMKM olahan kopi lokal dan camilan khas Jawa Barat, memberdayakan petani dan pekerja desa.',
+                'city' => 'Sukabumi',
+                'monthly_fixed_cost' => 4500000,
+            ]
+        );
+
+        if (! $business->wasRecentlyCreated && Product::where('business_id', $business->id)->exists()) {
+            return;
+        }
 
         // [nama, kategori, harga, hpp, stok, tren] — tren: rising | stable | declining
         $productDefs = [

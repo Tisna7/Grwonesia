@@ -21,6 +21,14 @@ class Order extends Model
         'channel',
         'total',
         'total_cost',
+        'courier',
+        'tracking_number',
+        'shipping_status',
+        'shipping_address',
+        'shipping_cost',
+        'estimated_arrival',
+        'current_location',
+        'shipping_timeline',
         'notes',
         'ordered_at',
     ];
@@ -32,6 +40,8 @@ class Order extends Model
             'channel' => OrderChannel::class,
             'total' => 'decimal:2',
             'total_cost' => 'decimal:2',
+            'shipping_cost' => 'decimal:2',
+            'shipping_timeline' => 'array',
             'ordered_at' => 'datetime',
         ];
     }

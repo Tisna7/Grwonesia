@@ -34,8 +34,8 @@
                         <span>💡 "Saya ingin hadiah untuk ibu umur 50 tahun."</span>
                         <span class="text-purple-400">→</span>
                     </button>
-                    <button @click="sendAiQuery('Saya mau kopi nusantara dengan impak sosial tertinggi.')" class="text-left p-2 rounded-xl bg-purple-950/60 hover:bg-purple-800/60 border border-purple-400/30 text-purple-200 text-xs transition flex items-center justify-between">
-                        <span>☕ "Kopi nusantara impak tinggi."</span>
+                    <button @click="sendAiQuery('Saya mau kopi khas nusantara terbaik.')" class="text-left p-2 rounded-xl bg-purple-950/60 hover:bg-purple-800/60 border border-purple-400/30 text-purple-200 text-xs transition flex items-center justify-between">
+                        <span>☕ "Kopi khas nusantara terbaik."</span>
                         <span class="text-purple-400">→</span>
                     </button>
                 </div>
@@ -53,7 +53,7 @@
                                         <img :src="prod.image" class="w-12 h-12 rounded-lg object-cover border border-purple-400/30">
                                         <div class="flex-1 min-w-0">
                                             <h5 class="text-xs font-bold text-white truncate" x-text="prod.name"></h5>
-                                            <p class="text-[10px] text-emerald-400 font-medium" x-text="prod.impact_text"></p>
+                                            <p class="text-[10px] text-purple-300 font-medium" x-text="prod.umkm"></p>
                                             <p class="text-xs font-semibold text-purple-300" x-text="formatRupiah(prod.price)"></p>
                                         </div>
                                         <button @click="addToCart(prod)" class="px-2.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-[11px] font-semibold shrink-0">
@@ -128,10 +128,6 @@
         </div>
 
         <div x-show="cart.length > 0" class="p-5 border-t border-purple-500/20 bg-purple-950/80 space-y-4">
-            <div class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2">
-                <svg class="w-5 h-5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                <span>Dampak Pembelian Ini: <strong class="text-white" x-text="calculateCartImpactText()"></strong></span>
-            </div>
 
             <div class="flex items-center justify-between text-sm">
                 <span class="text-purple-300/80">Total Pembayaran:</span>
@@ -216,11 +212,10 @@
 
         <div class="p-4 rounded-2xl bg-gradient-to-br from-purple-900/80 via-purple-950 to-indigo-950 border border-purple-400/40 text-left space-y-2">
             <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold text-purple-400 uppercase tracking-widest">Sertifikat Dampak Sosial</span>
-                <span class="text-xs text-emerald-400 font-semibold"> Verified Impact</span>
+                <span class="text-[11px] font-bold text-purple-400 uppercase tracking-widest">Rincian Transaksi</span>
+                <span class="text-xs text-purple-300 font-semibold">Terverifikasi</span>
             </div>
-            <div class="text-sm font-bold text-white" x-text="lastOrderImpactSummary"></div>
-            <p class="text-[11px] text-purple-300/70">Pendapatan langsung diteruskan ke UMKM mitra Grownesia di Palembang, Solo, dan Kebumen.</p>
+            <div class="text-xs text-purple-200">Pesanan Anda telah diteruskan ke mitra seller UMKM dan sedang disiapkan untuk pengiriman.</div>
         </div>
 
         <button @click="showSuccessModal = false" class="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition">
@@ -261,8 +256,8 @@
                         <h3 class="text-xl font-extrabold text-white font-heading" x-text="selectedProductDetail.name"></h3>
                         <p class="text-xs text-purple-200/80 leading-relaxed" x-text="selectedProductDetail.description"></p>
                         
-                        <div class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs">
-                            🌱 <strong>Social Impact:</strong> <span x-text="selectedProductDetail.impact_text"></span> (Score: <span x-text="selectedProductDetail.impact_score"></span>)
+                        <div class="p-3 rounded-xl bg-purple-900/40 border border-purple-500/30 text-purple-200 text-xs">
+                            📍 <strong>Asal Produk:</strong> <span x-text="selectedProductDetail.region"></span> • Garansi Kualitas Original UMKM
                         </div>
 
                         <div class="flex items-baseline gap-2 pt-1">
@@ -353,7 +348,7 @@
         </div>
 
         <div class="p-4 rounded-xl bg-purple-900/30 border border-purple-500/20 text-xs text-purple-300 flex items-center justify-between">
-            <span>⚡ <strong>Info:</strong> Fitur <strong>Role User (Dashboard Impact)</strong> saat ini aktif penuh.</span>
+            <span>⚡ <strong>Info:</strong> Fitur <strong>Portal Pembeli Grownesia</strong> saat ini aktif penuh.</span>
             <button @click="showRolePreviewModal = false" class="px-4 py-2 rounded-xl bg-purple-600 text-white font-bold">Mengerti</button>
         </div>
     </div>

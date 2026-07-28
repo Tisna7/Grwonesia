@@ -19,11 +19,7 @@
         @foreach ($products as $product)
             <div class="glass-card glass-card-hover p-5 flex gap-4">
                 <div class="w-20 h-20 shrink-0 rounded-xl bg-primary-950/60 border border-primary-400/15 flex items-center justify-center overflow-hidden">
-                    @if ($product->photo_path)
-                        <img src="{{ asset('storage/'.$product->photo_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                    @else
-                        <span class="text-2xl">📦</span>
-                    @endif
+                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                 </div>
                 <div class="min-w-0 flex-1">
                     <div class="flex items-start justify-between gap-2">
