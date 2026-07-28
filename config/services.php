@@ -2,61 +2,61 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Third Party Services
-    |--------------------------------------------------------------------------
-    |
-    | This file is for storing the credentials for third party services such
-    | as Mailgun, Postmark, AWS and more. This file provides the de facto
-    | location for this type of information, allowing packages to have
-    | a conventional file to locate the various service credentials.
-    |
-    */
+  /*
+  |--------------------------------------------------------------------------
+  | Third Party Services
+  |--------------------------------------------------------------------------
+  |
+  | This file is for storing the credentials for third party services such
+  | as Mailgun, Postmark, AWS and more. This file provides the de facto
+  | location for this type of information, allowing packages to have
+  | a conventional file to locate the various service credentials.
+  |
+  */
 
-    'google' => [
-        'client_id' => env('GOOGLE_CLIENT_ID'),
-        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT_URI'),
-    ],
+  'openrouter' => [
+    'key' => env('OPENROUTER_API_KEY'),
+    'model' => env('OPENROUTER_MODEL', 'google/gemini-2.0-flash-001'),
+    'base_url' => 'https://openrouter.ai/api/v1',
+  ],
 
-    'gemini' => [
-        'key' => env('GEMINI_API_KEY'),
-        'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
-        // Model murah untuk tugas ringan (caption, judul SEO, deskripsi)
-        'model_lite' => env('GEMINI_MODEL_LITE', 'gemini-2.5-flash-lite'),
-    ],
+  // Direct Google Gemini API (Disimpan untuk kemudahan switch)
+  'gemini' => [
+    'key' => env('GEMINI_API_KEY'),
+    'model' => env('GEMINI_MODEL', 'gemini-2.0-flash'),
+    'model_lite' => env('GEMINI_MODEL_LITE', 'gemini-2.5-flash-lite'),
+  ],
 
-    'whatsapp' => [
-        'driver' => env('WA_DRIVER', 'log'),
-        'url' => env('WA_GATEWAY_URL'),
-        'token' => env('WA_GATEWAY_TOKEN'),
-    ],
+  'whatsapp' => [
+    'driver' => env('WA_DRIVER', 'log'),
+    'url' => env('WA_GATEWAY_URL'),
+    'token' => env('WA_GATEWAY_TOKEN'),
+  ],
 
-    'instagram' => [
-        'business_id' => env('IG_BUSINESS_ID'),
-        'token' => env('IG_ACCESS_TOKEN'),
-    ],
+  'instagram' => [
+    'business_id' => env('IG_BUSINESS_ID'),
+    'token' => env('IG_ACCESS_TOKEN'),
+  ],
 
-    'postmark' => [
-        'key' => env('POSTMARK_API_KEY'),
-    ],
+  'postmark' => [
+    'key' => env('POSTMARK_API_KEY'),
+  ],
 
-    'resend' => [
-        'key' => env('RESEND_API_KEY'),
-    ],
+  'resend' => [
+    'key' => env('RESEND_API_KEY'),
+  ],
 
-    'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-    ],
+  'ses' => [
+    'key' => env('AWS_ACCESS_KEY_ID'),
+    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+  ],
 
-    'slack' => [
-        'notifications' => [
-            'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
-            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
-        ],
+  'slack' => [
+    'notifications' => [
+      'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
+      'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
     ],
+  ],
 
 ];

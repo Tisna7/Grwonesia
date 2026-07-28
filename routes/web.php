@@ -28,26 +28,17 @@ Route::get('/', [GrownesiaController::class, 'landing'])->name('landing');
 // Route::view('/', 'welcome')->name('home');
 
 Route::middleware('guest')->group(function () {
-//     Route::get('/register', [RegisterController::class, 'create'])->name('register');
+  //     Route::get('/register', [RegisterController::class, 'create'])->name('register');
 //     Route::post('/register', [RegisterController::class, 'store']);
 //     Route::get('/login', [LoginController::class, 'create'])->name('login');
 //     Route::post('/login', [LoginController::class, 'store']);
-  
-  
-    // Dedicated Authentication Pages (Split 2-Column Screen Layout)
-    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
 
-    // Email OTP Verification
-    Route::get('/verify-email', [AuthController::class, 'showVerifyForm'])->name('verification.notice');
-    Route::post('/verify-email', [AuthController::class, 'verifyOtp'])->name('verification.verify');
-    Route::post('/verify-email/resend', [AuthController::class, 'resendOtp'])->name('verification.resend');
 
-    // Google OAuth
-    Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
-    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+  // Dedicated Authentication Pages (Split 2-Column Screen Layout)
+  Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+  Route::post('/login', [AuthController::class, 'login']);
+  Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+  Route::post('/register', [AuthController::class, 'register']);
 });
 
 // Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
@@ -55,65 +46,73 @@ Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->nam
 Route::match(['get', 'post'], '/switch-role/{role}', [AuthController::class, 'switchRole'])->name('switch-role');
 
 // Logged-in User Dashboard & Checkout
-Route::get('/dashboard', [GrownesiaController::class, 'dashboard'])->middleware('auth')->name('user.dashboard');
-Route::get('/user/shipping/{order}', [GrownesiaController::class, 'getShippingStatus'])->middleware('auth')->name('user.shipping.status');
-Route::post('/checkout', [\App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->middleware('auth')->name('user.dashboard');
+Route::get('/user/shipping/{order}', [\App\Http\Controllers\User\DashboardController::class, 'getShippingStatus'])->middleware('auth')->name('user.shipping.status');
+Route::post('/checkout', [\App\Http\Controllers\User\CheckoutController::class, 'store'])->middleware('auth')->name('checkout.store');
+Route::get('/cart', [\App\Http\Controllers\User\CartController::class, 'index'])->middleware('auth')->name('cart.index');
+Route::post('/cart/sync', [\App\Http\Controllers\User\CartController::class, 'sync'])->middleware('auth')->name('cart.sync');
+
+Route::middleware('auth')->group(function () {
+  Route::post('/user/ai/chat', [\App\Http\Controllers\User\AiAssistantController::class, 'chat'])->name('user.ai.chat');
+  Route::post('/user/ai/gift-recommend', [\App\Http\Controllers\User\AiAssistantController::class, 'recommendGift'])->name('user.ai.gift-recommend');
+  Route::post('/user/ai/compare', [\App\Http\Controllers\User\AiAssistantController::class, 'compare'])->name('user.ai.compare');
+});
 
 Route::middleware(['auth', 'role:business'])->prefix('business')->name('business.')->group(function () {
-    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+  Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-    Route::resource('products', ProductController::class)->except('show');
-    Route::post('products/{product}/ai/photo', [ProductAiController::class, 'photo'])->name('products.ai.photo');
-    Route::post('products/{product}/ai/seo', [ProductAiController::class, 'seo'])->name('products.ai.seo');
-    Route::post('products/{product}/ai/description', [ProductAiController::class, 'description'])->name('products.ai.description');
+  Route::resource('products', ProductController::class)->except('show');
+  Route::post('products/{product}/ai/photo', [ProductAiController::class, 'photo'])->name('products.ai.photo');
+  Route::post('products/{product}/ai/seo', [ProductAiController::class, 'seo'])->name('products.ai.seo');
+  Route::post('products/{product}/ai/description', [ProductAiController::class, 'description'])->name('products.ai.description');
 
-    Route::resource('orders', OrderController::class)->only(['index', 'create', 'store', 'show']);
-    Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+  Route::resource('orders', OrderController::class)->only(['index', 'create', 'store', 'show']);
+  Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
 
-    Route::get('/shipping', [\App\Http\Controllers\Business\ShippingController::class, 'index'])->name('shipping.index');
-    Route::patch('/shipping/{order}', [\App\Http\Controllers\Business\ShippingController::class, 'update'])->name('shipping.update');
+  Route::get('/shipping', [\App\Http\Controllers\Business\ShippingController::class, 'index'])->name('shipping.index');
+  Route::patch('/shipping/{order}', [\App\Http\Controllers\Business\ShippingController::class, 'update'])->name('shipping.update');
 
-    Route::get('/inventory', InventoryController::class)->name('inventory');
+  Route::get('/inventory', InventoryController::class)->name('inventory');
 
-    Route::get('/coach', [CoachController::class, 'index'])->name('coach');
-    Route::post('/coach/{chat?}', [CoachController::class, 'send'])->name('coach.send');
+  Route::get('/coach', [CoachController::class, 'index'])->name('coach');
+  Route::post('/coach/{chat?}', [CoachController::class, 'send'])->name('coach.send');
 
-    Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing');
-    Route::post('/marketing/generate', [MarketingController::class, 'generate'])->name('marketing.generate');
+  Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing');
+  Route::post('/marketing/generate', [MarketingController::class, 'generate'])->name('marketing.generate');
 
-    Route::get('/whatsapp', [WhatsAppController::class, 'index'])->name('whatsapp');
-    Route::post('/whatsapp/broadcast', [WhatsAppController::class, 'broadcast'])->name('whatsapp.broadcast');
+  Route::get('/whatsapp', [WhatsAppController::class, 'index'])->name('whatsapp');
+  Route::post('/whatsapp/broadcast', [WhatsAppController::class, 'broadcast'])->name('whatsapp.broadcast');
 
-    Route::get('/instagram', [InstagramController::class, 'index'])->name('instagram');
-    Route::post('/instagram/publish', [InstagramController::class, 'publish'])->name('instagram.publish');
+  Route::get('/instagram', [InstagramController::class, 'index'])->name('instagram');
+  Route::post('/instagram/publish', [InstagramController::class, 'publish'])->name('instagram.publish');
 
-    Route::post('/programs/{program}/register', [ProgramSignupController::class, 'store'])->name('programs.register');
+  Route::post('/programs/{program}/register', [ProgramSignupController::class, 'store'])->name('programs.register');
 
-    Route::get('/finance', FinanceController::class)->name('finance');
-    Route::post('/finance/fixed-cost', function (Request $request) {
-        $request->validate(['monthly_fixed_cost' => ['required', 'numeric', 'min:0']]);
-        $request->user()->business->update(['monthly_fixed_cost' => $request->monthly_fixed_cost]);
+  Route::get('/finance', FinanceController::class)->name('finance');
+  Route::post('/finance/fixed-cost', function (Request $request) {
+    $request->validate(['monthly_fixed_cost' => ['required', 'numeric', 'min:0']]);
+    $request->user()->business->update(['monthly_fixed_cost' => $request->monthly_fixed_cost]);
 
-        return back()->with('success', 'Biaya tetap bulanan diperbarui.');
-    })->name('finance.fixed-cost');
+    return back()->with('success', 'Biaya tetap bulanan diperbarui.');
+  })->name('finance.fixed-cost');
 });
 
 Route::middleware(['auth', 'role:government'])->prefix('government')->name('government.')->group(function () {
-    Route::get('/dashboard', App\Http\Controllers\Government\DashboardController::class)->name('dashboard');
+  Route::get('/dashboard', App\Http\Controllers\Government\DashboardController::class)->name('dashboard');
 
-    Route::get('/programs', [ProgramController::class, 'index'])->name('programs');
-    Route::post('/programs', [ProgramController::class, 'store'])->name('programs.store');
-    Route::patch('/programs/{program}', [ProgramController::class, 'update'])->name('programs.update');
-    Route::delete('/programs/{program}', [ProgramController::class, 'destroy'])->name('programs.destroy');
-    Route::post('/programs/recommend', [ProgramController::class, 'recommend'])->name('programs.recommend');
+  Route::get('/programs', [ProgramController::class, 'index'])->name('programs');
+  Route::post('/programs', [ProgramController::class, 'store'])->name('programs.store');
+  Route::patch('/programs/{program}', [ProgramController::class, 'update'])->name('programs.update');
+  Route::delete('/programs/{program}', [ProgramController::class, 'destroy'])->name('programs.destroy');
+  Route::post('/programs/recommend', [ProgramController::class, 'recommend'])->name('programs.recommend');
 
-    Route::get('/policy', [PolicyController::class, 'index'])->name('policy');
-    Route::post('/policy/simulate', [PolicyController::class, 'simulate'])->name('policy.simulate');
+  Route::get('/policy', [PolicyController::class, 'index'])->name('policy');
+  Route::post('/policy/simulate', [PolicyController::class, 'simulate'])->name('policy.simulate');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', App\Http\Controllers\Admin\DashboardController::class)->name('dashboard');
-    Route::get('/businesses', [BusinessVerificationController::class, 'index'])->name('businesses');
-    Route::patch('/businesses/{business}', [BusinessVerificationController::class, 'update'])->name('businesses.update');
-    Route::get('/ai-center', AiCenterController::class)->name('ai-center');
+  Route::get('/dashboard', App\Http\Controllers\Admin\DashboardController::class)->name('dashboard');
+  Route::get('/businesses', [BusinessVerificationController::class, 'index'])->name('businesses');
+  Route::patch('/businesses/{business}', [BusinessVerificationController::class, 'update'])->name('businesses.update');
+  Route::get('/ai-center', AiCenterController::class)->name('ai-center');
 });
