@@ -8,23 +8,24 @@ use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
-    {
-        $this->call([
-            DemoBusinessSeeder::class,
-            RegionalDemoSeeder::class,
-            AdminDemoSeeder::class,
-        ]);
-        User::firstOrCreate(
-            ['email' => 'budi@grownesia.id'],
-            [
-                'name' => 'Budi Santoso',
-                'role' => 'user',
-                'password' => Hash::make('password'),
-            ]
-        );
-    }
+  /**
+   * Seed the application's database.
+   */
+  public function run(): void
+  {
+    $this->call([
+      DemoBusinessSeeder::class,
+      RegionalDemoSeeder::class,
+      AdminDemoSeeder::class,
+      UserDashboardSeeder::class,
+    ]);
+    User::firstOrCreate(
+      ['email' => 'budi@grownesia.id'],
+      [
+        'name' => 'Budi Santoso',
+        'role' => 'user',
+        'password' => Hash::make('password'),
+      ]
+    );
+  }
 }
