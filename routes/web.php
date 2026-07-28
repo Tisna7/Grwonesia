@@ -17,6 +17,7 @@ use App\Http\Controllers\Business\ProgramSignupController;
 use App\Http\Controllers\Business\WhatsAppController;
 use App\Http\Controllers\Government\PolicyController;
 use App\Http\Controllers\Government\ProgramController;
+use App\Http\Controllers\GoogleAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GrownesiaController;
@@ -38,6 +39,15 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+
+    // Email OTP Verification
+    Route::get('/verify-email', [AuthController::class, 'showVerifyForm'])->name('verification.notice');
+    Route::post('/verify-email', [AuthController::class, 'verifyOtp'])->name('verification.verify');
+    Route::post('/verify-email/resend', [AuthController::class, 'resendOtp'])->name('verification.resend');
+
+    // Google OAuth
+    Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 });
 
 // Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
