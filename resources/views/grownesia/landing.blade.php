@@ -38,17 +38,17 @@
           <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
             <a href="{{ route('register') }}"
               class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white font-bold text-sm transition shadow-lg shadow-purple-900/50 flex items-center gap-2">
-              <span>Mulai Sekarang — Gratis</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span>Mulai Sekarang Gratis</span>
+              <!-- <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
+              </svg> -->
             </a>
             <a href="{{ route('login') }}"
               class="px-8 py-3.5 rounded-xl bg-purple-950/80 hover:bg-purple-900 text-purple-200 font-bold text-sm border border-purple-500/30 transition flex items-center gap-2">
-              <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <!-- <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
+              </svg> -->
               <span>Masuk ke User Portal</span>
             </a>
           </div>
@@ -110,7 +110,7 @@
 
             <a href="{{ route('login') }}"
               class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition shadow-lg block text-center">
-              Coba Fitur Lengkap di Dashboard →
+              Coba Fitur Lengkap di Dashboard 
             </a>
           </div>
         </div>
@@ -246,7 +246,7 @@
         <div class="flex flex-wrap items-center justify-center gap-3">
           <a href="{{ route('login') }}"
             class="px-8 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white font-bold text-xs transition shadow-lg">
-            Masuk ke User Portal →
+            Masuk ke User Portal 
           </a>
         </div>
       </div>
