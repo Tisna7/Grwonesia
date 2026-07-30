@@ -14,7 +14,7 @@
             <svg class="w-4 h-4 text-purple-400 group-hover:-translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
-            <span>← Kembali ke Landing Page</span>
+            <span>Kembali ke Landing Page masuk</span>
         </a>
     </div>
 
