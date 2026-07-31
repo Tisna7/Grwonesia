@@ -90,24 +90,22 @@ class CheckoutController extends Controller
           ]
         );
 
-        $courierCode = strtoupper(explode(' ', trim($courier))[0] ?: 'JNE');
-        $trackingNumber = 'BITESHIP-' . $courierCode . '-' . strtoupper(substr(uniqid(), -8));
 
         $order = Order::create([
           'user_id' => $user?->id,
           'business_id' => $businessId,
           'customer_id' => $customer->id,
           'order_number' => Order::generateOrderNumber(),
-          'status' => OrderStatus::Paid->value,
+          'status' => OrderStatus::Pending->value,
           'channel' => OrderChannel::Marketplace->value,
           'total' => 0,
           'total_cost' => 0,
           'courier' => $courier,
-          'tracking_number' => $trackingNumber,
-          'shipping_status' => 'packed',
+          'tracking_number' => null,
+          'shipping_status' => 'pending',
           'shipping_address' => $shippingAddress,
           'shipping_cost' => $shippingCost,
-          'current_location' => 'Gudang Penjual UMKM',
+          'current_location' => null,
           'notes' => 'Pesanan Pembeli via Grownesia Marketplace with Midtrans & Biteship Integration',
           'ordered_at' => now(),
         ]);

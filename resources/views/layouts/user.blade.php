@@ -42,8 +42,10 @@
           class="w-9 h-9 rounded-xl ai-gradient flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-primary-600/40"
           style="font-family: 'Space Grotesk'">G</span>
         <span>
-          <span class="block text-lg font-bold tracking-tight text-white leading-none" style="font-family: 'Space Grotesk'">Grownesia</span>
-          <span class="block mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-300/80">User Portal</span>
+          <span class="block text-lg font-bold tracking-tight text-white leading-none"
+            style="font-family: 'Space Grotesk'">Grownesia</span>
+          <span class="block mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-300/80">User
+            Portal</span>
         </span>
       </a>
     </div>
@@ -52,30 +54,30 @@
     <nav class="flex-1 px-3 py-3 overflow-y-auto space-y-1">
       <p class="section-label">Navigasi Utama</p>
       <div class="space-y-1">
-        <a href="/produk" @click.prevent="activeTab = 'katalog'; sidebarMobileOpen = false"
-          class="sidebar-link" :class="(activeTab === 'katalog' || activeTab === 'detail') ? 'active' : ''">
-          <x-icon name="shopping-bag" class="w-4 h-4"/>
+        <a href="/produk" @click.prevent="activeTab = 'katalog'; sidebarMobileOpen = false" class="sidebar-link"
+          :class="(activeTab === 'katalog' || activeTab === 'detail') ? 'active' : ''">
+          <x-icon name="shopping-bag" class="w-4 h-4" />
           <span>Katalog Produk UMKM</span>
         </a>
 
         <a href="/ai-assistant" @click.prevent="activeTab = 'ai-assistant'; sidebarMobileOpen = false"
           class="sidebar-link flex items-center justify-between" :class="activeTab === 'ai-assistant' ? 'active' : ''">
           <div class="flex items-center gap-2.5">
-            <x-icon name="sparkles" class="w-4 h-4 text-amber-300 animate-pulse"/>
+            <x-icon name="sparkles" class="w-4 h-4 text-amber-300 animate-pulse" />
             <span>AI Personal Shopper</span>
           </div>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         </a>
 
-        <a href="/ai-gift" @click.prevent="activeTab = 'ai-gift'; sidebarMobileOpen = false"
-          class="sidebar-link" :class="activeTab === 'ai-gift' ? 'active' : ''">
-          <x-icon name="bot" class="w-4 h-4"/>
+        <a href="/ai-gift" @click.prevent="activeTab = 'ai-gift'; sidebarMobileOpen = false" class="sidebar-link"
+          :class="activeTab === 'ai-gift' ? 'active' : ''">
+          <x-icon name="bot" class="w-4 h-4" />
           <span>Rekomendasi Kado AI</span>
         </a>
 
-        <a href="/ai-compare" @click.prevent="activeTab = 'ai-compare'; sidebarMobileOpen = false"
-          class="sidebar-link" :class="activeTab === 'ai-compare' ? 'active' : ''">
-          <x-icon name="sliders" class="w-4 h-4"/>
+        <a href="/ai-compare" @click.prevent="activeTab = 'ai-compare'; sidebarMobileOpen = false" class="sidebar-link"
+          :class="activeTab === 'ai-compare' ? 'active' : ''">
+          <x-icon name="sliders" class="w-4 h-4" />
           <span>Komparasi Produk AI</span>
         </a>
       </div>
@@ -85,7 +87,7 @@
         <a href="/cart" @click.prevent="activeTab = 'cart'; sidebarMobileOpen = false"
           class="sidebar-link flex items-center justify-between" :class="activeTab === 'cart' ? 'active' : ''">
           <div class="flex items-center gap-2.5">
-            <x-icon name="package" class="w-4 h-4"/>
+            <x-icon name="package" class="w-4 h-4" />
             <span>Keranjang Belanja</span>
           </div>
           <span x-show="cartTotalCount > 0" x-text="cartTotalCount"
@@ -95,7 +97,7 @@
         <a href="/favorites" @click.prevent="activeTab = 'favorites'; sidebarMobileOpen = false"
           class="sidebar-link flex items-center justify-between" :class="activeTab === 'favorites' ? 'active' : ''">
           <div class="flex items-center gap-2.5">
-            <x-icon name="globe" class="w-4 h-4 text-rose-400"/>
+            <x-icon name="globe" class="w-4 h-4 text-rose-400" />
             <span>Produk Favorit</span>
           </div>
           <span x-show="favorites.length > 0" x-text="favorites.length"
@@ -103,9 +105,10 @@
         </a>
 
         <a href="/orders" @click.prevent="activeTab = 'orders'; sidebarMobileOpen = false"
-          class="sidebar-link flex items-center justify-between" :class="(activeTab === 'orders' || activeTab === 'write-review') ? 'active' : ''">
+          class="sidebar-link flex items-center justify-between"
+          :class="(activeTab === 'orders' || activeTab === 'write-review') ? 'active' : ''">
           <div class="flex items-center gap-2.5">
-            <x-icon name="file-text" class="w-4 h-4 text-emerald-400"/>
+            <x-icon name="file-text" class="w-4 h-4 text-emerald-400" />
             <span>Riwayat & Ulasan</span>
           </div>
           <span x-text="ordersHistory.length"
@@ -115,18 +118,19 @@
         <a href="/tracking" @click.prevent="activeTab = 'tracking'; sidebarMobileOpen = false"
           class="sidebar-link flex items-center justify-between" :class="activeTab === 'tracking' ? 'active' : ''">
           <div class="flex items-center gap-2.5">
-            <x-icon name="truck" class="w-4 h-4 text-blue-400"/>
+            <x-icon name="truck" class="w-4 h-4 text-blue-400" />
             <span>Lacak Pengiriman</span>
           </div>
-          <span class="bg-blue-500/20 text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">Live</span>
+          <span
+            class="bg-blue-500/20 text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">Live</span>
         </a>
       </div>
 
       <p class="section-label mt-4">Pengaturan Akun</p>
       <div class="space-y-1">
-        <a href="/profile" @click.prevent="activeTab = 'profile'; sidebarMobileOpen = false"
-          class="sidebar-link" :class="activeTab === 'profile' ? 'active' : ''">
-          <x-icon name="dashboard" class="w-4 h-4"/>
+        <a href="/profile" @click.prevent="activeTab = 'profile'; sidebarMobileOpen = false" class="sidebar-link"
+          :class="activeTab === 'profile' ? 'active' : ''">
+          <x-icon name="dashboard" class="w-4 h-4" />
           <span>Profil & Pengaturan</span>
         </a>
       </div>
@@ -135,17 +139,21 @@
     <!-- Sidebar User Profile Footer (Consistent with Business, Admin & Government) -->
     <div class="px-4 py-4 border-t border-primary-400/10">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 shrink-0 rounded-full ai-gradient flex items-center justify-center text-white font-bold text-sm shadow">
+        <div
+          class="w-9 h-9 shrink-0 rounded-full ai-gradient flex items-center justify-center text-white font-bold text-sm shadow">
           {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
         </div>
         <div class="min-w-0 flex-1">
-          <p class="text-xs font-bold text-white truncate" x-text="userProfile.name || '{{ Auth::user()->name ?? 'Pembeli' }}'"></p>
-          <p class="text-[10px] text-slate-500 truncate" x-text="userProfile.email || '{{ Auth::user()->email ?? 'user@grownesia.id' }}'"></p>
+          <p class="text-xs font-bold text-white truncate"
+            x-text="userProfile.name || '{{ Auth::user()->name ?? 'Pembeli' }}'"></p>
+          <p class="text-[10px] text-slate-500 truncate"
+            x-text="userProfile.email || '{{ Auth::user()->email ?? 'user@grownesia.id' }}'"></p>
         </div>
         <form method="POST" action="{{ route('logout') }}">
           @csrf
-          <button type="submit" title="Keluar dari Akun" class="p-2 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
-            <x-icon name="log-out" class="w-4 h-4"/>
+          <button type="submit" title="Keluar dari Akun"
+            class="p-2 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <x-icon name="log-out" class="w-4 h-4" />
           </button>
         </form>
       </div>
@@ -169,7 +177,8 @@
           </svg>
         </button>
         <div>
-          <h1 class="text-lg font-bold text-white leading-tight font-heading" x-text="getPageTitle()">Katalog Produk</h1>
+          <h1 class="text-lg font-bold text-white leading-tight font-heading" x-text="getPageTitle()">Katalog Produk
+          </h1>
           <p class="text-[11px] text-slate-500">{{ now()->translatedFormat('l, d F Y') }}</p>
         </div>
       </div>
@@ -194,7 +203,8 @@
             style="display: none;">
             <div class="flex items-center justify-between border-b border-purple-500/20 pb-2">
               <h4 class="text-xs font-bold text-white">Notifikasi (Pusat Informasi)</h4>
-              <button @click="markAllNotifRead()" class="text-[10px] text-purple-300/80 hover:text-white">Tandai Dibaca</button>
+              <button @click="markAllNotifRead()" class="text-[10px] text-purple-300/80 hover:text-white">Tandai
+                Dibaca</button>
             </div>
             <div class="space-y-2 max-h-60 overflow-y-auto text-xs">
               <template x-for="n in notifications" :key="'notif-'+n.id">
@@ -224,7 +234,7 @@
 
         <!-- Verified Buyer Badge -->
         <span class="hidden sm:inline-flex badge-pill bg-emerald-500/12 text-emerald-400 border-emerald-500/35">
-          <x-icon name="badge-check" class="w-3.5 h-3.5"/> Pembeli Terverifikasi
+          <x-icon name="badge-check" class="w-3.5 h-3.5" /> Pembeli Terverifikasi
         </span>
       </div>
     </header>
@@ -233,14 +243,14 @@
     <main class="flex-1 px-6 py-6">
       @if (session('success'))
         <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
-             class="mb-4 glass-card border-emerald-500/40 px-4 py-3 text-sm text-emerald-400 flex items-center justify-between">
+          class="mb-4 glass-card border-emerald-500/40 px-4 py-3 text-sm text-emerald-400 flex items-center justify-between">
           <span>{{ session('success') }}</span>
           <button @click="show = false" class="text-slate-500 hover:text-white">✕</button>
         </div>
       @endif
       @if (session('error'))
         <div x-data="{ show: true }" x-show="show"
-             class="mb-4 glass-card border-rose-500/40 px-4 py-3 text-sm text-rose-400 flex items-center justify-between">
+          class="mb-4 glass-card border-rose-500/40 px-4 py-3 text-sm text-rose-400 flex items-center justify-between">
           <span>{{ session('error') }}</span>
           <button @click="show = false" class="text-slate-500 hover:text-white">✕</button>
         </div>
@@ -281,7 +291,8 @@
       class="absolute bottom-16 right-0 w-80 sm:w-96 rounded-3xl bg-slate-950/95 border border-purple-400/40 shadow-2xl backdrop-blur-2xl overflow-hidden flex flex-col justify-between"
       style="box-shadow: 0 20px 50px rgba(124, 58, 237, 0.5);">
 
-      <div class="p-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white flex items-center justify-between shadow-md">
+      <div
+        class="p-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white flex items-center justify-between shadow-md">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
             <svg class="w-4 h-4 text-amber-300 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">

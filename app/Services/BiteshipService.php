@@ -175,52 +175,69 @@ class BiteshipService
         // Postal code ranges (first 2 digits)
         if ($postalCode && strlen($postalCode) >= 2) {
             $prefix = (int) substr($postalCode, 0, 2);
-            if ($prefix >= 10 && $prefix <= 16) return 'jakarta'; // DKI Jakarta & Bodetabek
-            if ($prefix >= 17 && $prefix <= 17) return 'jakarta'; // Tangerang
-            if (($prefix >= 40 && $prefix <= 46) || ($prefix >= 50 && $prefix <= 59)) return 'jawa'; // Jawa Barat & Jawa Tengah
-            if ($prefix >= 60 && $prefix <= 69) return 'jawa'; // Jawa Timur
-            if ($prefix >= 55 && $prefix <= 56) return 'jawa'; // Yogyakarta
-            if ($prefix >= 20 && $prefix <= 39) return 'sumatera';
-            if ($prefix >= 70 && $prefix <= 77) return 'kalimantan';
-            if ($prefix >= 80 && $prefix <= 87) return 'bali_ntt';
-            if ($prefix >= 90 && $prefix <= 96) return 'sulawesi';
-            if ($prefix >= 97 && $prefix <= 99) return 'papua';
+            if ($prefix >= 10 && $prefix <= 16)
+                return 'jakarta'; // DKI Jakarta & Bodetabek
+            if ($prefix >= 17 && $prefix <= 17)
+                return 'jakarta'; // Tangerang
+            if (($prefix >= 40 && $prefix <= 46) || ($prefix >= 50 && $prefix <= 59))
+                return 'jawa'; // Jawa Barat & Jawa Tengah
+            if ($prefix >= 60 && $prefix <= 69)
+                return 'jawa'; // Jawa Timur
+            if ($prefix >= 55 && $prefix <= 56)
+                return 'jawa'; // Yogyakarta
+            if ($prefix >= 20 && $prefix <= 39)
+                return 'sumatera';
+            if ($prefix >= 70 && $prefix <= 77)
+                return 'kalimantan';
+            if ($prefix >= 80 && $prefix <= 87)
+                return 'bali_ntt';
+            if ($prefix >= 90 && $prefix <= 96)
+                return 'sulawesi';
+            if ($prefix >= 97 && $prefix <= 99)
+                return 'papua';
         }
 
         // City name matching
         $jakartaKeys = ['jakarta', 'tangerang', 'bekasi', 'depok', 'bogor', 'cikarang'];
         foreach ($jakartaKeys as $key) {
-            if (str_contains($city, $key)) return 'jakarta';
+            if (str_contains($city, $key))
+                return 'jakarta';
         }
 
         $jawaKeys = ['bandung', 'semarang', 'surabaya', 'yogyakarta', 'jogja', 'solo', 'malang', 'cirebon', 'karawang', 'purwokerto', 'tegal', 'pekalongan', 'kediri', 'madiun', 'jember', 'tasikmalaya', 'sukabumi', 'garut'];
         foreach ($jawaKeys as $key) {
-            if (str_contains($city, $key)) return 'jawa';
+            if (str_contains($city, $key))
+                return 'jawa';
         }
 
         $sumateraKeys = ['medan', 'palembang', 'padang', 'pekanbaru', 'jambi', 'lampung', 'bengkulu', 'aceh', 'batam', 'pangkal'];
         foreach ($sumateraKeys as $key) {
-            if (str_contains($city, $key)) return 'sumatera';
+            if (str_contains($city, $key))
+                return 'sumatera';
         }
 
         $kalimantanKeys = ['pontianak', 'banjarmasin', 'balikpapan', 'samarinda', 'palangkaraya', 'tarakan'];
         foreach ($kalimantanKeys as $key) {
-            if (str_contains($city, $key)) return 'kalimantan';
+            if (str_contains($city, $key))
+                return 'kalimantan';
         }
 
         $sulawesiKeys = ['makassar', 'manado', 'palu', 'kendari', 'gorontalo'];
         foreach ($sulawesiKeys as $key) {
-            if (str_contains($city, $key)) return 'sulawesi';
+            if (str_contains($city, $key))
+                return 'sulawesi';
         }
 
         $baliKeys = ['bali', 'denpasar', 'mataram', 'lombok', 'kupang', 'labuan bajo'];
         foreach ($baliKeys as $key) {
-            if (str_contains($city, $key)) return 'bali_ntt';
+            if (str_contains($city, $key))
+                return 'bali_ntt';
         }
 
         $papuaKeys = ['papua', 'jayapura', 'sorong', 'ambon', 'ternate', 'maluku', 'manokwari'];
         foreach ($papuaKeys as $key) {
-            if (str_contains($city, $key)) return 'papua';
+            if (str_contains($city, $key))
+                return 'papua';
         }
 
         return 'default';

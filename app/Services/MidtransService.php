@@ -201,4 +201,36 @@ class MidtransService
             'created_by' => 'System Midtrans Payment',
         ]);
     }
+
+    /**
+     * Check transaction status directly from Midtrans API
+     */
+    public function checkStatus(Order $order): array
+    {
+        if (!$order->order_number) {
+            return ['success' => false, 'message' => 'Order number is missing'];
+        }
+
+        $url = $this->isProduction
+            ? "https://api.midtrans.com/v2/{$order->order_number}/status"
+            : "https://api.sandbox.midtrans.com/v2/{$order->order_number}/status";
+
+        try {
+            $authHeader = 'Basic ' . base64_encode($this->serverKey . ':');
+            $response = Http::withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Authorization' => $authHeader,
+            ])->timeout(8)->get($url);
+
+            if ($response->successful()) {
+                $payload = $response->json();
+                return $this->handleNotification($payload);
+            }
+        } catch (\Throwable $e) {
+            Log::error("Midtrans Status Check Exception for order {$order->order_number}: " . $e->getMessage());
+        }
+
+        return ['success' => false, 'message' => 'Failed to check status'];
+    }
 }

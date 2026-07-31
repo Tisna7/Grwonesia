@@ -78,6 +78,20 @@ class Product extends Model
     return $this->stock <= $this->min_stock;
   }
 
+  protected static function booted(): void
+  {
+    static::created(function (Product $product) {
+      if ($product->status === 'active') {
+        try {
+          $waService = app(\App\Services\WhatsApp\WhatsAppService::class);
+          $waService->postProductToChannel($product);
+        } catch (\Exception $e) {
+          \Illuminate\Support\Facades\Log::error('Error posting product to WhatsApp channel: ' . $e->getMessage());
+        }
+      }
+    });
+  }
+
   public function getImageUrlAttribute(): string
   {
     if ($this->photo_path) {

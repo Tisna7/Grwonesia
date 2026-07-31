@@ -100,6 +100,33 @@ class DashboardController extends Controller
       ->latest('id')
       ->get();
 
+    // Check status for any pending orders via Midtrans API directly to update them if paid (local/production fallback)
+    if (Auth::check() && $dbOrders->isNotEmpty()) {
+      $midtransService = app(\App\Services\MidtransService::class);
+      $pendingOrders = $dbOrders->where('status', \App\Enums\OrderStatus::Pending->value)
+        ->where('created_at', '>=', now()->subHours(24))
+        ->take(3);
+
+      $hasUpdates = false;
+      foreach ($pendingOrders as $o) {
+        $checkRes = $midtransService->checkStatus($o);
+        if (!empty($checkRes['success'])) {
+          $hasUpdates = true;
+        }
+      }
+
+      // Re-fetch orders if any were updated to Paid/Cancelled
+      if ($hasUpdates) {
+        $dbOrders = Order::with(['business', 'items.product', 'customer'])
+          ->whereHas('customer', function ($q) use ($userEmail) {
+            $q->where('email', $userEmail);
+          })
+          ->latest('ordered_at')
+          ->latest('id')
+          ->get();
+      }
+    }
+
     if ($dbOrders->isEmpty()) {
       // Fallback to recent orders in DB so live tracking is always populated for demonstration
       $dbOrders = Order::with(['business', 'items.product', 'customer'])
@@ -190,6 +217,13 @@ class DashboardController extends Controller
   public function getShippingStatus(Order $order): JsonResponse
   {
     $order->load(['business', 'items.product', 'customer']);
+
+    // If order is pending, check Midtrans status first
+    if ($order->status === \App\Enums\OrderStatus::Pending->value) {
+      $midtransService = app(\App\Services\MidtransService::class);
+      $midtransService->checkStatus($order);
+      $order->refresh();
+    }
 
     // Fetch live Biteship tracking info if tracking number is present
     $biteshipService = app(\App\Services\BiteshipService::class);

@@ -247,4 +247,44 @@ class WhatsAppWebhookTest extends TestCase
     $businessUser->refresh();
     $this->assertEquals('127367322333186', $businessUser->phone);
   }
+
+  public function test_product_creation_triggers_whatsapp_channel_post(): void
+  {
+    $token = 'test-token-123';
+    config([
+      'services.whatsapp.url' => 'http://127.0.0.1:3010',
+      'services.whatsapp.token' => $token,
+      'services.whatsapp.driver' => 'baileys',
+      'services.whatsapp.channel_jid' => '120363303649643194@newsletter',
+    ]);
+
+    // Mock the outgoing send API call to the channel
+    Http::fake([
+      '127.0.0.1:3010/send' => Http::response(['id' => 'WAMSG999', 'to' => '120363303649643194@newsletter']),
+    ]);
+
+    $user = User::factory()->create(['role' => 'business']);
+    $business = Business::factory()->create(['user_id' => $user->id]);
+
+    $product = Product::create([
+      'business_id' => $business->id,
+      'name' => 'Kopi Arabika Premium',
+      'slug' => 'kopi-arabika-premium-123',
+      'sku' => 'KOPI-PREM',
+      'category' => 'kopi',
+      'description' => 'Kopi Arabika pilihan berkualitas tinggi.',
+      'price' => 75000,
+      'stock' => 50,
+      'status' => 'active',
+    ]);
+
+    // Verify that the HTTP fake received the request to send the product message to the WhatsApp channel
+    Http::assertSent(function ($request) {
+      return $request->url() === 'http://127.0.0.1:3010/send' &&
+             $request['to'] === '120363303649643194@newsletter' &&
+             str_contains($request['message'], 'Kopi Arabika Premium') &&
+             str_contains($request['message'], 'Kopi Arabika pilihan berkualitas tinggi.') &&
+             str_contains($request['message'], 'Rp 75.000');
+    });
+  }
 }

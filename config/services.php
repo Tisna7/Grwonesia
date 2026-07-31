@@ -31,6 +31,7 @@ return [
         'driver' => env('WA_DRIVER', 'log'),
         'url' => env('WA_GATEWAY_URL'),
         'token' => env('WA_GATEWAY_TOKEN'),
+        'channel_jid' => env('WA_CHANNEL_JID'),
     ],
 
     'instagram' => [

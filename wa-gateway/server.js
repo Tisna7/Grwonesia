@@ -231,8 +231,8 @@ app.post('/send', async (req, res) => {
 
     try {
         let targetJid = jid;
-        // Pastikan nomor terdaftar di WhatsApp (onWhatsApp hanya bekerja untuk nomor telepon, dilewati untuk LID)
-        if (!jid.endsWith('@lid')) {
+        // Pastikan nomor terdaftar di WhatsApp (onWhatsApp hanya bekerja untuk nomor telepon, dilewati untuk LID, newsletter/saluran, dan group)
+        if (!jid.endsWith('@lid') && !jid.endsWith('@newsletter') && !jid.endsWith('@g.us')) {
             const [check] = await sock.onWhatsApp(jid);
             if (!check?.exists) {
                 return res.status(404).json({ error: `Nomor ${jid} tidak terdaftar di WhatsApp.` });

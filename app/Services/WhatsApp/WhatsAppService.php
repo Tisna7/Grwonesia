@@ -5,8 +5,10 @@ namespace App\Services\WhatsApp;
 use App\Models\Business;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\WaMessage;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class WhatsAppService
 {
@@ -70,6 +72,39 @@ class WhatsAppService
         }
 
         return ['sent' => $sent, 'skipped' => $skipped];
+    }
+
+    /**
+     * Kirim postingan produk baru ke saluran WhatsApp.
+     */
+    public function postProductToChannel(Product $product): ?WaMessage
+    {
+        $channelJid = config('services.whatsapp.channel_jid');
+
+        if (blank($channelJid)) {
+            Log::info('WhatsAppService: WA_CHANNEL_JID belum dikonfigurasi, skip posting produk.');
+            return null;
+        }
+
+        $product->loadMissing('business');
+
+        $priceFormatted = number_format((float) $product->price, 0, ',', '.');
+        $productUrl = route('user.produk.detail', ['id' => $product->id]);
+
+        $body = "🌱 *PRODUK BARU DI GROWNESIA!* 🌱\n\n".
+            "Toko *{$product->business->name}* baru saja menambahkan produk baru:\n\n".
+            "📦 *{$product->name}*\n".
+            "💰 Harga: *Rp {$priceFormatted}*\n".
+            "📂 Kategori: *{$product->category}*\n\n".
+            "📝 Deskripsi:\n".
+            "{$product->description}\n\n".
+            "Yuk dukung UMKM lokal dengan membelinya sekarang! 👇\n".
+            "🔗 Beli di: {$productUrl}\n\n".
+            "Atau ketik *beli {$product->id}* langsung ke nomor WhatsApp Bot ini untuk membeli! 🛒";
+
+        return $this->dispatch($product->business, $channelJid, 'channel_post', $body, [
+            'product_id' => $product->id,
+        ]);
     }
 
     private function dispatch(Business $business, string $phone, string $type, string $body, array $extra = []): WaMessage
