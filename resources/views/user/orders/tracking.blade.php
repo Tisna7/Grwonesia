@@ -21,10 +21,10 @@
     <template x-if="ordersHistory.length > 0">
       <div class="flex items-center gap-2 bg-purple-950/80 p-1.5 rounded-2xl border border-purple-500/30">
         <span class="text-[11px] font-bold text-purple-300 px-2">Pilih Pesanan:</span>
-        <select x-model="trackingOrder"
+        <select @change="trackingOrder = ordersHistory[$event.target.value]"
           class="bg-purple-900 text-white text-xs font-bold rounded-xl px-3 py-1.5 border border-purple-400/30 focus:outline-none">
-          <template x-for="ord in ordersHistory" :key="'tr-sel-'+ord.id">
-            <option :value="ord" x-text="ord.id + ' — ' + ord.productName"></option>
+          <template x-for="(ord, idx) in ordersHistory" :key="'tr-sel-'+ord.id">
+            <option :value="idx" :selected="trackingOrder && trackingOrder.id === ord.id" x-text="ord.id + ' — ' + ord.productName"></option>
           </template>
         </select>
       </div>
@@ -213,15 +213,15 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-2 border-t border-purple-500/20">
           <div>
             <span class="text-[10px] text-purple-400 block">Metode Bayar:</span>
-            <span class="font-bold text-white" x-text="trackingOrder.paymentMethod || 'QRIS'"></span>
+            <span class="font-bold text-white" x-text="trackingOrder.paymentMethod || 'Midtrans Snap Gateway'"></span>
           </div>
           <div>
-            <span class="text-[10px] text-purple-400 block">Ongkos Kirim:</span>
-            <span class="font-bold text-emerald-400">Rp 0 (Subsidi UMKM)</span>
+            <span class="text-[10px] text-purple-400 block">Ongkos Kirim (Biteship):</span>
+            <span class="font-bold text-purple-300" x-text="trackingOrder.shippingCost ? formatRupiah(trackingOrder.shippingCost) : 'Rp 12.000'"></span>
           </div>
           <div>
             <span class="text-[10px] text-purple-400 block">Total Transaksi:</span>
-            <span class="font-bold text-white" x-text="formatRupiah(trackingOrder.total)"></span>
+            <span class="font-bold text-emerald-400" x-text="formatRupiah(trackingOrder.total)"></span>
           </div>
           <div>
             <span class="text-[10px] text-purple-400 block">No. Transaksi:</span>

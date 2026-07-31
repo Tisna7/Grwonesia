@@ -72,6 +72,8 @@ Route::middleware('auth')->group(function () {
   Route::get('/favorites', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.favorites');
 
   Route::get('/user/shipping/{order}', [\App\Http\Controllers\User\DashboardController::class, 'getShippingStatus'])->name('user.shipping.status');
+  Route::post('/user/shipping/rates', [\App\Http\Controllers\User\CheckoutController::class, 'getShippingRates'])->name('user.shipping.rates');
+  Route::post('/user/shipping/search-area', [\App\Http\Controllers\User\CheckoutController::class, 'searchArea'])->name('user.shipping.search-area');
   Route::post('/user/profile/update', [\App\Http\Controllers\User\DashboardController::class, 'updateProfile'])->name('user.profile.update');
   Route::post('/user/ai/chat', [\App\Http\Controllers\User\AiAssistantController::class, 'chat'])->name('user.ai.chat');
   Route::post('/user/ai/gift-recommend', [\App\Http\Controllers\User\AiAssistantController::class, 'recommendGift'])->name('user.ai.gift-recommend');
@@ -143,4 +145,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 // WhatsApp gateway webhook (public, exempt from CSRF)
 Route::post('/whatsapp/webhook', [\App\Http\Controllers\WhatsAppWebhookController::class, 'handle']);
+
+// Midtrans Payment Gateway Webhook Callback (public, exempt from CSRF)
+Route::post('/midtrans/notification', [\App\Http\Controllers\User\CheckoutController::class, 'handleMidtransNotification']);
+
 

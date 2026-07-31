@@ -75,7 +75,6 @@
                     <p class="text-[11px] text-slate-500">{{ now()->translatedFormat('l, d F Y') }}</p>
                 </div>
             </div>
-            <x-role-switcher />
         </header>
 
         <main class="flex-1 px-6 py-6">

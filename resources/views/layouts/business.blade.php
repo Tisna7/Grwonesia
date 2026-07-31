@@ -121,7 +121,6 @@
                         Menunggu Verifikasi
                     </span>
                 @endif
-                <x-role-switcher />
             </div>
         </header>
 

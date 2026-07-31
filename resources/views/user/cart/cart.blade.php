@@ -84,25 +84,103 @@
               rows="2"></textarea>
           </div>
 
+          <!-- Biteship Area Search Autocomplete -->
+          <div class="relative">
+            <label class="block font-semibold text-purple-200 mb-1">Cari Kota / Kecamatan Tujuan (Biteship)</label>
+            <div class="relative">
+              <input type="text" x-model="areaSearchQuery" @input="onAreaSearchInput()" @focus="onAreaSearchInput()"
+                placeholder="Ketik nama kota / kecamatan, contoh: Kebayoran Baru..."
+                class="w-full p-2.5 rounded-xl bg-purple-950/80 border border-purple-500/30 text-purple-100 placeholder-purple-400/50 pr-8">
+              <div x-show="isSearchingArea" class="absolute right-2.5 top-1/2 -translate-y-1/2">
+                <svg class="w-4 h-4 text-purple-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+              </div>
+            </div>
+            <!-- Search Results Dropdown -->
+            <div x-show="areaSearchResults.length > 0" x-transition
+              class="absolute z-20 w-full mt-1 bg-purple-950 border border-purple-500/40 rounded-xl shadow-2xl shadow-purple-950/80 overflow-hidden">
+              <template x-for="area in areaSearchResults" :key="area.id">
+                <button @click="selectArea(area)" type="button"
+                  class="w-full px-3 py-2.5 text-left hover:bg-purple-800/60 transition text-xs border-b border-purple-500/10 last:border-0 flex items-center gap-2">
+                  <svg class="w-3.5 h-3.5 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span class="text-purple-100" x-text="area.name"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <!-- Selected Area Badge -->
+          <div x-show="selectedCityName || selectedPostalCode" x-transition
+            class="flex items-center gap-2 p-2 rounded-lg bg-emerald-950/40 border border-emerald-500/20">
+            <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-emerald-300 text-[11px]">
+              Tujuan: <strong x-text="areaSearchQuery || selectedCityName"></strong>
+              <span x-show="selectedPostalCode" class="text-emerald-400/70" x-text="'(' + selectedPostalCode + ')'"></span>
+            </span>
+          </div>
+
+          <!-- Biteship Courier & Shipping Rate Selection -->
           <div>
-            <label class="block font-semibold text-purple-200 mb-1">Pilih Metode Pembayaran</label>
-            <div class="grid grid-cols-3 gap-2">
-              <button @click="selectedPaymentMethod = 'qris'"
-                :class="selectedPaymentMethod === 'qris' ? 'border-purple-400 bg-purple-800/60' : 'border-purple-500/30 bg-purple-950/80'"
-                class="p-2.5 rounded-xl border text-center font-bold text-white text-[11px]">
-                QRIS Instant
-              </button>
-              <button @click="selectedPaymentMethod = 'gopay'"
-                :class="selectedPaymentMethod === 'gopay' ? 'border-purple-400 bg-purple-800/60' : 'border-purple-500/30 bg-purple-950/80'"
-                class="p-2.5 rounded-xl border text-center font-bold text-white text-[11px]">
-                GoPay / OVO
-              </button>
-              <button @click="selectedPaymentMethod = 'bank'"
-                :class="selectedPaymentMethod === 'bank' ? 'border-purple-400 bg-purple-800/60' : 'border-purple-500/30 bg-purple-950/80'"
-                class="p-2.5 rounded-xl border text-center font-bold text-white text-[11px]">
-                Transfer Bank
+            <div class="flex items-center justify-between mb-1">
+              <label class="font-semibold text-purple-200">Pilih Ekspedisi Pengiriman</label>
+              <button type="button" @click="loadShippingRates()"
+                class="text-[10px] text-purple-300 hover:text-white underline flex items-center gap-1">
+                <svg x-show="isLoadingRates" class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+                Hitung Ulang Ongkir
               </button>
             </div>
+
+            <!-- Zone Info Badge -->
+            <div x-show="shippingRateZone" class="mb-2 text-[10px] text-purple-400/80 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+              Zona Pengiriman: <strong class="text-blue-300" x-text="shippingRateZone"></strong>
+              <span x-show="shippingRateSource === 'biteship_api'" class="ml-1 px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Live API</span>
+              <span x-show="shippingRateSource === 'fallback_zone'" class="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Estimasi</span>
+            </div>
+
+            <div class="space-y-2">
+              <template x-for="c in availableCouriers" :key="'courier-'+c.code">
+                <div @click="selectCourier(c)"
+                  class="p-2.5 rounded-xl border transition cursor-pointer flex items-center justify-between"
+                  :class="selectedCourierCode === c.code ? 'border-purple-400 bg-purple-900/60 shadow-md shadow-purple-950' : 'border-purple-500/20 bg-purple-950/60 hover:border-purple-500/40'">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <div class="w-4 h-4 rounded-full border flex items-center justify-center shrink-0"
+                      :class="selectedCourierCode === c.code ? 'border-purple-400 bg-purple-600' : 'border-purple-500/40 bg-purple-950'">
+                      <div class="w-1.5 h-1.5 rounded-full bg-white" x-show="selectedCourierCode === c.code"></div>
+                    </div>
+                    <div class="min-w-0">
+                      <span class="font-bold text-white text-xs block truncate" x-text="c.name"></span>
+                      <span class="text-[10px] text-purple-300/70" x-text="'Estimasi: ' + c.etd"></span>
+                    </div>
+                  </div>
+                  <span class="font-bold text-purple-300 text-xs shrink-0" x-text="formatRupiah(c.price)"></span>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- Midtrans Gateway Info Box -->
+          <div class="p-3 rounded-2xl bg-gradient-to-r from-purple-950 via-purple-900/40 to-slate-950 border border-purple-400/30 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="font-bold text-white text-xs">Metode Pembayaran: Midtrans Snap Gateway</span>
+              </div>
+              <span class="text-[9px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-400/30">Official Gateway</span>
+            </div>
+            <p class="text-[11px] text-purple-200/80 leading-relaxed">
+              Pembayaran aman & instan via Midtrans (QRIS, GoPay, ShopeePay, Transfer Bank BCA/Mandiri/BNI/BRI, & Kartu Kredit).
+            </p>
           </div>
 
           <div
@@ -119,15 +197,26 @@
               <span class="text-white font-semibold" x-text="formatRupiah(cartTotalPrice)"></span>
             </div>
             <div class="flex justify-between">
-              <span class="text-purple-300/70">Ongkos Kirim (Subsidi UMKM)</span>
-              <span class="text-emerald-400 font-semibold">GRATIS</span>
+              <span class="text-purple-300/70">Ongkos Kirim (<span x-text="selectedCourierName"></span>)</span>
+              <span class="text-purple-300 font-semibold" x-text="formatRupiah(selectedCourierPrice)"></span>
             </div>
             <div class="pt-2 border-t border-purple-500/20 flex justify-between text-base font-extrabold">
               <span class="text-purple-200">Total Akhir:</span>
-              <span class="text-purple-300" x-text="formatRupiah(cartTotalPrice)"></span>
+              <span class="text-emerald-400" x-text="formatRupiah(grandTotalPrice)"></span>
             </div>
           </div>
         </div>
+
+          <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-purple-950/60 border border-purple-500/20 text-[11px] text-purple-300/80">
+            <span class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Midtrans Snap Secured
+            </span>
+            <span class="flex items-center gap-1 text-blue-300">
+              <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+              Biteship Live Tracking
+            </span>
+          </div>
 
         <button @click="processPaymentSuccess()"
           :disabled="selectedCartItems.length === 0"
@@ -136,7 +225,7 @@
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
           </svg>
-          <span x-text="selectedCartItems.length === 0 ? 'Pilih Produk untuk Checkout' : 'Bayar Sekarang (' + selectedCartItems.length + ' Produk)'"></span>
+          <span x-text="selectedCartItems.length === 0 ? 'Pilih Produk untuk Checkout' : 'Bayar Sekarang via Midtrans (' + selectedCartItems.length + ' Produk)'"></span>
         </button>
 
         <div class="flex items-center gap-2 pt-2 border-t border-purple-500/20">

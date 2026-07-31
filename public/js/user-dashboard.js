@@ -249,8 +249,17 @@ function grownesiaUserDashboard() {
       // Sync initial URL path without adding duplicate history entry
       this.updateUrl(false);
 
-      // Watchers for URL state synchronization
-      this.$watch('activeTab', () => this.updateUrl(true));
+      // Load shipping rates on initialization
+      await this.loadShippingRates();
+
+      // Watchers for URL state & activeTab synchronization
+      this.$watch('activeTab', (newTab) => {
+        this.updateUrl(true);
+        if (newTab === 'cart' || newTab === 'checkout') {
+          this.loadShippingRates();
+        }
+      });
+
       this.$watch('selectedProductDetail', () => {
         if (this.activeTab === 'detail') this.updateUrl(true);
       });
@@ -535,6 +544,138 @@ function grownesiaUserDashboard() {
       return this.selectedCartItems.reduce((sum, item) => sum + (item.product ? (item.product.price * item.qty) : 0), 0);
     },
 
+    get grandTotalPrice() {
+      return this.cartTotalPrice + (this.selectedCourierPrice || 0);
+    },
+
+    availableCouriers: [
+      { code: 'jne', name: 'JNE Express (REG)', price: 12000, etd: '1-2 Hari' },
+      { code: 'sicepat', name: 'SiCepat Ekspres (SIUNT)', price: 11000, etd: '1-2 Hari' },
+      { code: 'jnt', name: 'J&T Express (EZ)', price: 13000, etd: '1-3 Hari' },
+      { code: 'pos', name: 'Pos Indonesia (Kilat)', price: 10000, etd: '2-4 Hari' }
+    ],
+    selectedCourierCode: 'jne',
+    selectedCourierName: 'JNE Express (REG)',
+    selectedCourierPrice: 12000,
+    selectedCourierEtd: '1-2 Hari',
+    shippingRateSource: '',
+    shippingRateZone: '',
+    isLoadingRates: false,
+
+    // Biteship area search autocomplete
+    areaSearchQuery: '',
+    areaSearchResults: [],
+    isSearchingArea: false,
+    selectedAreaId: '',
+    selectedPostalCode: '',
+    selectedCityName: '',
+    areaSearchTimeout: null,
+
+    selectCourier(courier) {
+      this.selectedCourierCode = courier.code;
+      this.selectedCourierName = courier.name;
+      this.selectedCourierPrice = courier.price;
+      this.selectedCourierEtd = courier.etd;
+    },
+
+    async searchShippingArea(query) {
+      if (!query || query.length < 3) {
+        this.areaSearchResults = [];
+        return;
+      }
+      this.isSearchingArea = true;
+      const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      try {
+        let res = await fetch('/user/shipping/search-area', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': token || '' },
+          body: JSON.stringify({ query })
+        });
+        if (res.ok) {
+          let data = await res.json();
+          if (data.success && data.areas) {
+            this.areaSearchResults = data.areas.slice(0, 5);
+          }
+        }
+      } catch (err) {
+        console.error('Area search error:', err);
+      }
+      this.isSearchingArea = false;
+    },
+
+    selectArea(area) {
+      this.selectedAreaId = area.id;
+      this.selectedPostalCode = area.postal_code ? String(area.postal_code) : '';
+      this.selectedCityName = area.city || area.district || '';
+      this.areaSearchQuery = area.name;
+      this.areaSearchResults = [];
+      this.loadShippingRates();
+    },
+
+    onAreaSearchInput() {
+      clearTimeout(this.areaSearchTimeout);
+      this.areaSearchTimeout = setTimeout(() => {
+        this.searchShippingArea(this.areaSearchQuery);
+      }, 400);
+    },
+
+    async loadShippingRates() {
+      this.isLoadingRates = true;
+      const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      try {
+        const address = this.userProfile.address || '';
+        let body = {
+          address: address,
+          items: this.selectedCartItems.map(i => ({
+            name: i.product?.name || 'Produk UMKM',
+            value: i.product?.price || 50000,
+            weight: 500,
+            quantity: i.qty
+          }))
+        };
+
+        // If user picked an area from autocomplete, send the resolved postal code/area_id
+        if (this.selectedPostalCode) {
+          body.postal_code = this.selectedPostalCode;
+        }
+        if (this.selectedAreaId) {
+          body.area_id = this.selectedAreaId;
+        }
+        if (this.selectedCityName) {
+          body.city = this.selectedCityName;
+        }
+
+        let res = await fetch('/user/shipping/rates', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': token || '' },
+          body: JSON.stringify(body)
+        });
+        if (res.ok) {
+          let data = await res.json();
+          if (data.success && data.rates && data.rates.length > 0) {
+            this.availableCouriers = data.rates.map(r => ({
+              code: r.courier_code + '_' + r.service_name.toLowerCase().replace(/[^a-z0-9]/g, ''),
+              name: r.courier_name + ' (' + r.service_name + ')',
+              price: r.price,
+              etd: r.etd
+            }));
+            this.shippingRateSource = data.source || 'api';
+            this.shippingRateZone = data.zone || '';
+            // Select previously selected or first
+            const found = this.availableCouriers.find(c => c.code === this.selectedCourierCode);
+            if (found) {
+              this.selectCourier(found);
+            } else {
+              this.selectCourier(this.availableCouriers[0]);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching shipping rates:', err);
+      }
+      this.isLoadingRates = false;
+    },
+
     addToCart(product, redirect = true) {
       const idx = this.cart.findIndex(i => i.product && i.product.id === product.id);
       if (idx > -1) {
@@ -546,6 +687,7 @@ function grownesiaUserDashboard() {
       this.saveCart();
       if (redirect) {
         this.activeTab = 'cart';
+        this.loadShippingRates();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
@@ -573,43 +715,125 @@ function grownesiaUserDashboard() {
       }
 
       const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      let snapToken = null;
+      let orderNumbers = [];
+      let resData = null;
+
       try {
-        await fetch('/checkout', {
+        let response = await fetch('/checkout', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'X-CSRF-TOKEN': token || ''
           },
-          body: JSON.stringify({ cart: selected })
+          body: JSON.stringify({
+            cart: selected,
+            courier: this.selectedCourierName,
+            shipping_cost: this.selectedCourierPrice,
+            shipping_address: this.userProfile.address
+          })
         });
+
+        if (response.ok) {
+          resData = await response.json();
+          snapToken = resData.snap_token;
+          orderNumbers = resData.order_numbers || [];
+        }
       } catch (err) {
         console.error('Gagal mengirim pesanan ke server:', err);
       }
 
-      const newOrderId = 'GRW-2026-' + Math.floor(1000 + Math.random() * 9000);
-      const firstProd = selected[0].product;
-      const itemsSummary = selected.map(c => `${c.product.name} (${c.qty}x)`).join(', ');
+      const completeOrderUI = () => {
+        const newOrderId = orderNumbers.length > 0 ? orderNumbers[0] : ('GRW-2026-' + Math.floor(1000 + Math.random() * 9000));
+        const firstProd = selected[0].product;
+        const itemsSummary = selected.map(c => `${c.product.name} (${c.qty}x)`).join(', ');
 
-      this.ordersHistory.unshift({
-        id: newOrderId,
-        date: 'Hari ini',
-        productId: firstProd.id,
-        productName: firstProd.name,
-        items: itemsSummary,
-        total: this.cartTotalPrice,
-        status: 'Diproses',
-        impact: '3 Pekerja Terbantu',
-        reviewed: false
-      });
+        const newOrderObj = {
+          id: newOrderId,
+          db_id: Date.now(),
+          date: 'Hari ini',
+          productId: firstProd.id,
+          productName: firstProd.name,
+          items: itemsSummary,
+          total: this.grandTotalPrice,
+          status: 'Diproses',
+          shippingStatus: 'Order Packed',
+          courier: this.selectedCourierName,
+          courierLogo: (this.selectedCourierCode || 'JNE').toUpperCase(),
+          trackingNumber: 'BITESHIP-' + (this.selectedCourierCode || 'JNE').toUpperCase() + '-' + Math.floor(10000000 + Math.random() * 90000000),
+          currentLocation: 'Gudang Penjual UMKM (Logistik Biteship)',
+          lastUpdated: 'Baru saja',
+          estimatedArrival: this.selectedCourierEtd,
+          businessName: firstProd.umkm || 'UMKM Mitra',
+          shippingAddress: this.userProfile.address || 'Jakarta Selatan',
+          shippingCost: this.selectedCourierPrice,
+          paymentMethod: 'Midtrans Snap Payment Gateway',
+          productImage: firstProd.image || firstProd.image_url || '/images/products/kopi_gula_aren.webp',
+          aiInsight: 'Pengiriman dipantau secara real-time via Biteship Logistik.',
+          aiConfidence: '99%',
+          impact: 'Pemberdayaan UMKM & Pekerja Lokal',
+          reviewed: false,
+          timeline: [
+            {
+              time: 'Hari ini, ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+              location: 'Sistem Grownesia Marketplace',
+              desc: 'Pembayaran Dikonfirmasi via Midtrans Gateway',
+              icon: 'check',
+              done: true
+            },
+            {
+              time: 'Hari ini, ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+              location: 'Gudang Penjual UMKM',
+              desc: 'Pesanan Diteruskan ke Ekspedisi ' + this.selectedCourierName + ' (Biteship)',
+              icon: 'package',
+              done: true
+            }
+          ]
+        };
 
-      this.lastOrderImpactSummary = "3 Pekerja Lokal, 1 Desa Berkembang, & 2 Penenun Terbantu";
-      this.userImpact.totalJobs += 3;
-      this.userImpact.villagesHelped += 1;
-      this.cart = this.cart.filter(i => i.product && i.selected === false);
-      this.saveCart();
-      this.activeTab = 'success-impact';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+        this.ordersHistory.unshift(newOrderObj);
+        this.trackingOrder = newOrderObj;
+        this.lastOrderImpactSummary = "3 Pekerja Lokal, 1 Desa Berkembang, & 2 Penenun Terbantu";
+        this.userImpact.totalJobs += 3;
+        this.userImpact.villagesHelped += 1;
+        this.cart = this.cart.filter(i => i.product && i.selected === false);
+        this.saveCart();
+        this.activeTab = 'success-impact';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      // Trigger Midtrans Snap popup payment if available
+      if (window.snap && snapToken) {
+        try {
+          window.snap.pay(snapToken, {
+            onSuccess: function (result) {
+              console.log('Midtrans Payment Success:', result);
+              completeOrderUI();
+            },
+            onPending: function (result) {
+              console.log('Midtrans Payment Pending:', result);
+              completeOrderUI();
+            },
+            onError: function (result) {
+              console.error('Midtrans Payment Error:', result);
+              alert('Pembayaran Midtrans mengalami kendala atau dibatalkan.');
+            },
+            onClose: function () {
+              console.log('Midtrans Snap Popup Closed by user without completing payment');
+              alert('Jendela pembayaran Midtrans ditutup. Anda dapat melanjutkan pembayaran kapan saja.');
+            }
+          });
+        } catch (err) {
+          console.error('Error invoking window.snap.pay:', err);
+          completeOrderUI();
+        }
+      } else if (resData && resData.redirect_url && !resData.is_mock) {
+        window.open(resData.redirect_url, '_blank');
+      } else {
+        // Fallback simulation for sandbox mock / local test
+        completeOrderUI();
+      }
     },
 
     scrollToBottom() {

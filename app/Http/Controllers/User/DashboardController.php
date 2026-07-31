@@ -190,9 +190,24 @@ class DashboardController extends Controller
   public function getShippingStatus(Order $order): JsonResponse
   {
     $order->load(['business', 'items.product', 'customer']);
+
+    // Fetch live Biteship tracking info if tracking number is present
+    $biteshipService = app(\App\Services\BiteshipService::class);
+    $trackingRes = $biteshipService->trackWaybill($order->tracking_number ?: ('BITESHIP-' . $order->id), $order->courier ?: 'JNE');
+
+    if (!empty($trackingRes['current_location'])) {
+      $order->current_location = $trackingRes['current_location'];
+    }
+
+    $formattedOrder = $this->formatOrderForFrontend($order);
+    if (!empty($trackingRes['history'])) {
+      $formattedOrder['timeline'] = $trackingRes['history'];
+    }
+
     return response()->json([
       'success' => true,
-      'order' => $this->formatOrderForFrontend($order),
+      'order' => $formattedOrder,
+      'biteship' => $trackingRes,
     ]);
   }
 

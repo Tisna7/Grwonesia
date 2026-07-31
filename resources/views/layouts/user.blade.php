@@ -15,6 +15,13 @@
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
     rel="stylesheet">
 
+  <!-- Midtrans Snap Payment Gateway -->
+  @php
+    $isProdMidtrans = filter_var(env('MIDTRANS_IS_PRODUCTION', config('services.midtrans.is_production', false)), FILTER_VALIDATE_BOOLEAN);
+    $snapJsUrl = $isProdMidtrans ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js';
+  @endphp
+  <script src="{{ $snapJsUrl }}" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+
   <!-- Vite Assets -->
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -219,9 +226,6 @@
         <span class="hidden sm:inline-flex badge-pill bg-emerald-500/12 text-emerald-400 border-emerald-500/35">
           <x-icon name="badge-check" class="w-3.5 h-3.5"/> Pembeli Terverifikasi
         </span>
-
-        <!-- Role Switcher Component for Unified Ecosystem Switching -->
-        <x-role-switcher />
       </div>
     </header>
 
