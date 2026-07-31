@@ -117,7 +117,7 @@ class DashboardController extends Controller
     $userProfile = [
       'name' => Auth::user()?->name ?? 'Budi Santoso',
       'email' => Auth::user()?->email ?? 'budi@grownesia.id',
-      'phone' => Auth::user()?->phone ?? '0812-3456-7890',
+      'phone' => Auth::user()?->raw_phone ?? Auth::user()?->phone ?? '0812-3456-7890',
       'address' => Auth::user()?->address ?? 'Jl. Sudirman No. 45, Kebayoran Baru, Jakarta Selatan',
     ];
 
@@ -248,5 +248,62 @@ class DashboardController extends Controller
       'reviewed' => false,
       'timeline' => $timeline,
     ];
+  }
+
+  public function updateProfile(Request $request): JsonResponse
+  {
+    $request->validate([
+      'name' => ['required', 'string', 'max:255'],
+      'email' => ['required', 'string', 'email', 'max:255'],
+      'phone' => ['required', 'string'],
+      'address' => ['nullable', 'string'],
+    ]);
+
+    $user = Auth::user();
+    if (!$user) {
+      return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+    }
+
+    $phoneInput = $request->input('phone');
+    $cleanedPhone = preg_replace('/\D/', '', $phoneInput);
+    $resolvedJid = $cleanedPhone;
+
+    // Call WA Gateway resolve JID
+    try {
+      $response = \Illuminate\Support\Facades\Http::withHeaders([
+        'Authorization' => 'Bearer ' . env('WA_GATEWAY_TOKEN'),
+      ])->timeout(5)->get('http://localhost:3010/resolve', [
+            'phone' => $cleanedPhone
+          ]);
+
+      if ($response->successful()) {
+        $data = $response->json();
+        if (!empty($data['exists']) && !empty($data['jid'])) {
+          $jidParts = explode('@', $data['jid']);
+          $resolvedJid = $jidParts[0];
+        }
+      }
+    } catch (\Throwable $e) {
+      \Log::warning('Gagal resolve JID dari WA Gateway: ' . $e->getMessage());
+    }
+
+    $user->update([
+      'name' => $request->name,
+      'email' => $request->email,
+      'phone' => $resolvedJid,
+      'raw_phone' => $phoneInput,
+      'address' => $request->address,
+    ]);
+
+    return response()->json([
+      'success' => true,
+      'message' => 'Profil berhasil diperbarui!',
+      'user' => [
+        'name' => $user->name,
+        'email' => $user->email,
+        'phone' => $phoneInput,
+        'address' => $user->address,
+      ]
+    ]);
   }
 }

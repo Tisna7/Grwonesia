@@ -25,7 +25,8 @@
 
   <!-- LEFT SIDEBAR NAVIGATION (LOGGED-IN USER LAYOUT) -->
   <aside
-    class="w-64 glass-card !rounded-none border-r border-primary-400/15 min-h-screen flex flex-col justify-between shrink-0 sticky top-0 h-screen z-40 hidden md:flex">
+    class="fixed inset-y-0 left-0 z-40 w-64 glass-card !rounded-none border-r border-primary-400/15 h-screen flex flex-col justify-between shrink-0 transition-transform duration-300 md:translate-x-0"
+    :class="sidebarMobileOpen ? 'translate-x-0' : '-translate-x-full'">
 
     <!-- Sidebar Brand & User Profile Card -->
     <div class="p-5 border-b border-primary-400/10 space-y-4">
@@ -43,7 +44,7 @@
       </div>
 
       <!-- Profile Info Widget Card -->
-      <button @click="activeTab = 'profile'"
+      <button @click="activeTab = 'profile'; sidebarMobileOpen = false"
         :class="activeTab === 'profile' ? 'bg-purple-800/60 border-purple-400/50 shadow-md' : 'bg-purple-950/60 border-purple-500/20 hover:bg-purple-900/40'"
         class="w-full p-3 rounded-2xl border text-xs flex items-center justify-between transition text-left group">
         <div class="flex items-center gap-2.5 min-w-0">
@@ -70,7 +71,7 @@
       <div class="text-[10px] uppercase font-extrabold tracking-wider text-purple-400/70 px-3 pt-1 pb-2">Navigasi Utama
       </div>
 
-      <button @click="activeTab = 'katalog'"
+      <button @click="activeTab = 'katalog'; sidebarMobileOpen = false"
         :class="activeTab === 'katalog' || activeTab === 'detail' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center gap-3">
         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +81,7 @@
         <span>Katalog Produk UMKM</span>
       </button>
 
-      <button @click="activeTab = 'ai-assistant'"
+      <button @click="activeTab = 'ai-assistant'; sidebarMobileOpen = false"
         :class="activeTab === 'ai-assistant' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -92,7 +93,7 @@
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
       </button>
 
-      <button @click="activeTab = 'ai-gift'"
+      <button @click="activeTab = 'ai-gift'; sidebarMobileOpen = false"
         :class="activeTab === 'ai-gift' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center gap-3">
         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,7 +103,7 @@
         <span>Rekomendasi Kado AI</span>
       </button>
 
-      <button @click="activeTab = 'ai-compare'"
+      <button @click="activeTab = 'ai-compare'; sidebarMobileOpen = false"
         :class="activeTab === 'ai-compare' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center gap-3">
         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +117,7 @@
       <div class="text-[10px] uppercase font-extrabold tracking-wider text-purple-400/70 px-3 pt-4 pb-2">Belanja &
         Transaksi</div>
 
-      <button @click="activeTab = 'cart'"
+      <button @click="activeTab = 'cart'; sidebarMobileOpen = false"
         :class="activeTab === 'cart' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -130,7 +131,7 @@
           class="bg-fuchsia-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow"></span>
       </button>
 
-      <button @click="activeTab = 'favorites'"
+      <button @click="activeTab = 'favorites'; sidebarMobileOpen = false"
         :class="activeTab === 'favorites' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -144,7 +145,7 @@
           class="bg-red-500/20 text-red-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-red-500/30"></span>
       </button>
 
-      <button @click="activeTab = 'orders'"
+      <button @click="activeTab = 'orders'; sidebarMobileOpen = false"
         :class="activeTab === 'orders' || activeTab === 'write-review' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -158,7 +159,7 @@
           class="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-500/30"></span>
       </button>
 
-      <button @click="activeTab = 'tracking'"
+      <button @click="activeTab = 'tracking'; sidebarMobileOpen = false"
         :class="activeTab === 'tracking' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -176,7 +177,7 @@
       <div class="text-[10px] uppercase font-extrabold tracking-wider text-purple-400/70 px-3 pt-4 pb-2">Pengaturan Akun
       </div>
 
-      <button @click="activeTab = 'profile'"
+      <button @click="activeTab = 'profile'; sidebarMobileOpen = false"
         :class="activeTab === 'profile' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center gap-3">
         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,14 +205,23 @@
     </div>
   </aside>
 
+  <!-- Mobile sidebar overlay -->
+  <div x-show="sidebarMobileOpen" x-cloak @click="sidebarMobileOpen = false"
+    class="fixed inset-0 z-30 bg-black/60 md:hidden"></div>
+
   <!-- RIGHT MAIN WORKSPACE AREA -->
-  <div class="flex-1 min-w-0 flex flex-col min-h-screen">
+  <div class="md:pl-64 flex-1 min-w-0 flex flex-col min-h-screen">
 
     <!-- TOP HEADER FOR DASHBOARD WORKSPACE -->
     <header
       class="sticky top-0 z-30 glass-card !rounded-none border-b border-primary-400/10 px-6 py-4 flex items-center justify-between backdrop-blur-xl">
       <div class="flex items-center gap-4">
-        <h2 class="text-lg font-bold text-white font-heading">
+        <button class="md:hidden text-slate-300 p-1" @click="sidebarMobileOpen = true">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <h2 class="text-sm sm:text-lg font-bold text-white font-heading truncate">
           Selamat datang, <span x-text="userProfile.name"></span>!
         </h2>
         <span
@@ -312,6 +322,7 @@
         selectedImpactFilter: 'all',
         activeTab: 'katalog',
         showFloatingAiWidget: false,
+        sidebarMobileOpen: false,
 
         userProfile: @json($userProfile ?? []),
 
@@ -501,9 +512,41 @@
           this.unreadNotifCount = 0;
         },
 
-        saveProfile() {
-          alert('Profil dan Alamat berhasil diperbarui!');
-          this.activeTab = 'katalog';
+        async saveProfile() {
+          const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+          try {
+            let response = await fetch('/user/profile/update', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': token || ''
+              },
+              body: JSON.stringify({
+                name: this.userProfile.name,
+                email: this.userProfile.email,
+                phone: this.userProfile.phone,
+                address: this.userProfile.address
+              })
+            });
+
+            if (response.ok) {
+              let data = await response.json();
+              if (data && data.success) {
+                this.userProfile.phone = data.user.phone;
+                alert('Profil dan Alamat berhasil diperbarui!\nWhatsApp ID terhubung: ' + data.user.phone);
+                this.activeTab = 'katalog';
+              } else {
+                alert('Gagal memperbarui profil: ' + (data.message || 'Error'));
+              }
+            } else {
+              let errData = await response.json().catch(() => ({}));
+              alert('Gagal memperbarui profil: ' + (errData.message || 'Status ' + response.status));
+            }
+          } catch (e) {
+            console.error('Failed to save profile:', e);
+            alert('Terjadi kesalahan saat menyimpan profil.');
+          }
         },
 
         get filteredProducts() {
