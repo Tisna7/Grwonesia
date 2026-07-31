@@ -54,15 +54,25 @@ Route::middleware('guest')->group(function () {
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 Route::match(['get', 'post'], '/switch-role/{role}', [AuthController::class, 'switchRole'])->name('switch-role');
 
-// Logged-in User Dashboard & Checkout
-Route::get('/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->middleware('auth')->name('user.dashboard');
-Route::get('/user/shipping/{order}', [\App\Http\Controllers\User\DashboardController::class, 'getShippingStatus'])->middleware('auth')->name('user.shipping.status');
-Route::post('/user/profile/update', [\App\Http\Controllers\User\DashboardController::class, 'updateProfile'])->middleware('auth')->name('user.profile.update');
-Route::post('/checkout', [\App\Http\Controllers\User\CheckoutController::class, 'store'])->middleware('auth')->name('checkout.store');
-Route::get('/cart', [\App\Http\Controllers\User\CartController::class, 'index'])->middleware('auth')->name('cart.index');
-Route::post('/cart/sync', [\App\Http\Controllers\User\CartController::class, 'sync'])->middleware('auth')->name('cart.sync');
-
+// Logged-in User Dashboard & Navigation Routes
 Route::middleware('auth')->group(function () {
+  Route::get('/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.dashboard');
+  Route::get('/produk', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.produk');
+  Route::get('/produk/{id}', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.produk.detail');
+  Route::get('/checkout', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.checkout');
+  Route::post('/checkout', [\App\Http\Controllers\User\CheckoutController::class, 'store'])->name('checkout.store');
+  Route::get('/cart', [\App\Http\Controllers\User\CartController::class, 'index'])->name('cart.index');
+  Route::post('/cart/sync', [\App\Http\Controllers\User\CartController::class, 'sync'])->name('cart.sync');
+  Route::get('/orders', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.orders');
+  Route::get('/tracking', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.tracking');
+  Route::get('/profile', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.profile');
+  Route::get('/ai-assistant', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.ai-assistant');
+  Route::get('/ai-gift', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.ai-gift');
+  Route::get('/ai-compare', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.ai-compare');
+  Route::get('/favorites', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.favorites');
+
+  Route::get('/user/shipping/{order}', [\App\Http\Controllers\User\DashboardController::class, 'getShippingStatus'])->name('user.shipping.status');
+  Route::post('/user/profile/update', [\App\Http\Controllers\User\DashboardController::class, 'updateProfile'])->name('user.profile.update');
   Route::post('/user/ai/chat', [\App\Http\Controllers\User\AiAssistantController::class, 'chat'])->name('user.ai.chat');
   Route::post('/user/ai/gift-recommend', [\App\Http\Controllers\User\AiAssistantController::class, 'recommendGift'])->name('user.ai.gift-recommend');
   Route::post('/user/ai/compare', [\App\Http\Controllers\User\AiAssistantController::class, 'compare'])->name('user.ai.compare');

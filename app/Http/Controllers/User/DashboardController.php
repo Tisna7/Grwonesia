@@ -13,8 +13,36 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-  public function index(): View
+  public function index(Request $request, $id = null): View
   {
+    $path = trim($request->path(), '/');
+
+    $activeTab = 'katalog';
+    $initialProductId = null;
+
+    if (str_starts_with($path, 'produk/') || str_starts_with($path, 'products/')) {
+      $activeTab = 'detail';
+      $initialProductId = (int) ($id ?? basename($path));
+    } elseif ($path === 'checkout') {
+      $activeTab = 'cart';
+    } elseif ($path === 'cart' || $path === 'keranjang') {
+      $activeTab = 'cart';
+    } elseif ($path === 'orders' || $path === 'pesanan') {
+      $activeTab = 'orders';
+    } elseif ($path === 'tracking' || $path === 'lacak') {
+      $activeTab = 'tracking';
+    } elseif ($path === 'profile' || $path === 'profil') {
+      $activeTab = 'profile';
+    } elseif ($path === 'ai-assistant') {
+      $activeTab = 'ai-assistant';
+    } elseif ($path === 'ai-gift') {
+      $activeTab = 'ai-gift';
+    } elseif ($path === 'ai-compare') {
+      $activeTab = 'ai-compare';
+    } elseif ($path === 'favorites' || $path === 'favorit') {
+      $activeTab = 'favorites';
+    }
+
     $dbProducts = Product::with('business')->active()->latest()->get();
 
     if ($dbProducts->isNotEmpty()) {
@@ -147,7 +175,9 @@ class DashboardController extends Controller
       'notifications',
       'unreadNotifCount',
       'userProfile',
-      'userImpact'
+      'userImpact',
+      'activeTab',
+      'initialProductId'
     ));
   }
 
