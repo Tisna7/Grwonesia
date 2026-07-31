@@ -46,7 +46,7 @@
                 <span>Lacak Pengiriman</span>
               </button>
 
-              <!-- Ulasan Button Trigger -->
+              <!-- Ulasan Button Trigger (jika status Selesai) -->
               <template x-if="order.status === 'Selesai'">
                 <div>
                   <template x-if="!order.reviewed">

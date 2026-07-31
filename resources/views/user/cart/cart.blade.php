@@ -12,7 +12,23 @@
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
     <!-- Left: Cart Items List -->
     <div class="lg:col-span-7 space-y-4">
-      <h4 class="text-sm font-bold text-purple-300 uppercase tracking-wider">Item dalam Keranjang</h4>
+      <div class="flex items-center justify-between border-b border-purple-500/20 pb-2">
+        <h4 class="text-sm font-bold text-purple-300 uppercase tracking-wider">Item dalam Keranjang</h4>
+        
+        <template x-if="cart.length > 0">
+          <div @click="toggleSelectAll(!allSelected)" class="flex items-center gap-2 cursor-pointer select-none group">
+            <div class="w-5 h-5 rounded-lg border transition-all duration-200 flex items-center justify-center shrink-0"
+              :class="allSelected ? 'bg-gradient-to-tr from-purple-600 to-fuchsia-600 border-purple-400 text-white shadow-lg shadow-purple-900/50 scale-105' : 'bg-purple-950/80 border-purple-500/40 text-transparent group-hover:border-purple-400'">
+              <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <span class="text-xs text-purple-300/90 group-hover:text-white font-semibold transition">
+              Pilih Semua (<span x-text="selectedCartItems.length"></span>/<span x-text="cart.length"></span> Produk)
+            </span>
+          </div>
+        </template>
+      </div>
 
       <template x-if="cart.length === 0">
         <div class="p-8 text-center bg-purple-card rounded-2xl border border-purple-500/20 space-y-3">
@@ -24,8 +40,19 @@
 
       <template x-for="(item, idx) in cart" :key="'citem-'+idx">
         <template x-if="item.product">
-          <div class="p-4 rounded-2xl bg-purple-card border border-purple-500/20 flex gap-4 items-center">
-            <img :src="item.product.image" loading="lazy"
+          <div class="p-4 rounded-2xl bg-purple-card border transition flex gap-3.5 items-center"
+            :class="item.selected !== false ? 'border-purple-500/60 bg-purple-900/20 shadow-md shadow-purple-950/50' : 'border-purple-500/10 opacity-60 bg-purple-950/30'">
+            
+            <!-- Custom Styled Checkbox Button -->
+            <button type="button" @click="item.selected = !(item.selected !== false); saveCart()"
+              class="w-5 h-5 rounded-lg border transition-all duration-200 flex items-center justify-center shrink-0 select-none group focus:outline-none"
+              :class="item.selected !== false ? 'bg-gradient-to-tr from-purple-600 to-fuchsia-600 border-purple-400 text-white shadow-md shadow-purple-900/50 scale-105' : 'bg-purple-950/90 border-purple-500/40 text-transparent hover:border-purple-400'">
+              <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </button>
+
+            <img :src="item.product.image || item.product.image_url || '/images/products/kopi_gula_aren.webp'" loading="lazy"
               class="w-16 h-16 rounded-xl object-cover border border-purple-400/30 shrink-0">
             <div class="flex-1 min-w-0">
               <h4 class="text-sm font-bold text-white truncate" x-text="item.product.name"></h4>
@@ -88,7 +115,7 @@
 
           <div class="p-3.5 rounded-xl bg-purple-950/90 border border-purple-500/30 space-y-2">
             <div class="flex justify-between">
-              <span class="text-purple-300/70">Subtotal Produk</span>
+              <span class="text-purple-300/70">Subtotal Produk (<span x-text="selectedCartTotalCount"></span> item)</span>
               <span class="text-white font-semibold" x-text="formatRupiah(cartTotalPrice)"></span>
             </div>
             <div class="flex justify-between">
@@ -103,11 +130,13 @@
         </div>
 
         <button @click="processPaymentSuccess()"
-          class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs transition shadow-lg flex items-center justify-center gap-2">
+          :disabled="selectedCartItems.length === 0"
+          :class="selectedCartItems.length === 0 ? 'opacity-50 cursor-not-allowed from-gray-600 to-gray-700' : 'from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500'"
+          class="w-full py-3.5 rounded-xl bg-gradient-to-r text-white font-bold text-xs transition shadow-lg flex items-center justify-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
           </svg>
-          <span>Bayar Sekarang & Terbitkan Sertifikat Dampak</span>
+          <span x-text="selectedCartItems.length === 0 ? 'Pilih Produk untuk Checkout' : 'Bayar Sekarang (' + selectedCartItems.length + ' Produk)'"></span>
         </button>
 
         <div class="flex items-center gap-2 pt-2 border-t border-purple-500/20">

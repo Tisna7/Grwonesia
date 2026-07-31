@@ -113,4 +113,39 @@ class OrderController extends Controller
             ]
         ];
     }
+
+    /**
+     * Mark order as received/delivered by user.
+     */
+    public function confirmReceived(Request $request): JsonResponse
+    {
+        $request->validate([
+            'order_id' => 'required',
+        ]);
+
+        $orderId = $request->input('order_id');
+
+        $order = Order::where('id', $orderId)
+            ->orWhere('order_number', $orderId)
+            ->first();
+
+        if (!$order) {
+            return response()->json(['success' => false, 'message' => 'Pesanan tidak ditemukan.'], 404);
+        }
+
+        $order->update([
+            'shipping_status' => 'delivered',
+            'order_status' => 'completed',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pesanan berhasil dikonfirmasi diterima! Anda sekarang dapat memberikan ulasan produk.',
+            'order' => [
+                'id' => $order->order_number ?: ('GRW-' . $order->id),
+                'db_id' => $order->id,
+                'status' => 'Selesai',
+            ],
+        ]);
+    }
 }

@@ -76,6 +76,7 @@ class CheckoutController extends Controller
         );
 
         $order = Order::create([
+          'user_id' => $user?->id,
           'business_id' => $businessId,
           'customer_id' => $customer->id,
           'order_number' => Order::generateOrderNumber(),
@@ -121,9 +122,9 @@ class CheckoutController extends Controller
       }
     });
 
-    // Clear cart items from database after successful checkout
-    if ($user) {
-      CartItem::where('user_id', $user->id)->delete();
+    // Clear checked-out cart items from database after successful checkout
+    if ($user && !empty($productIds)) {
+      CartItem::where('user_id', $user->id)->whereIn('product_id', $productIds)->delete();
     }
 
     return response()->json([

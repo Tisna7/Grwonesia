@@ -76,6 +76,9 @@ Route::middleware('auth')->group(function () {
   Route::post('/user/ai/chat', [\App\Http\Controllers\User\AiAssistantController::class, 'chat'])->name('user.ai.chat');
   Route::post('/user/ai/gift-recommend', [\App\Http\Controllers\User\AiAssistantController::class, 'recommendGift'])->name('user.ai.gift-recommend');
   Route::post('/user/ai/compare', [\App\Http\Controllers\User\AiAssistantController::class, 'compare'])->name('user.ai.compare');
+  Route::post('/favorites/toggle', [\App\Http\Controllers\User\FavoriteController::class, 'toggle'])->name('user.favorites.toggle');
+  Route::post('/orders/confirm-received', [\App\Http\Controllers\User\OrderController::class, 'confirmReceived'])->name('user.orders.confirm-received');
+  Route::post('/user/reviews', [\App\Http\Controllers\User\ReviewController::class, 'store'])->name('user.reviews.store');
 });
 
 Route::middleware(['auth', 'role:business'])->prefix('business')->name('business.')->group(function () {

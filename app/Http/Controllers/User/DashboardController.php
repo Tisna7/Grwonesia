@@ -167,6 +167,11 @@ class DashboardController extends Controller
       'craftswomenHelped' => $craftswomenHelped,
     ];
 
+    // Fetch dynamic favorites for logged in user
+    $userFavorites = Auth::check()
+      ? \App\Models\Favorite::where('user_id', Auth::id())->pluck('product_id')->map(fn($id) => (int) $id)->toArray()
+      : [];
+
     return view('user.dashboard', compact(
       'products',
       'user',
@@ -177,7 +182,8 @@ class DashboardController extends Controller
       'userProfile',
       'userImpact',
       'activeTab',
-      'initialProductId'
+      'initialProductId',
+      'userFavorites'
     ));
   }
 
@@ -275,7 +281,7 @@ class DashboardController extends Controller
       'aiInsight' => 'Pengiriman dipantau secara real-time dari sistem logistik penjual ' . ($order->business?->name ?? 'UMKM') . '.',
       'aiConfidence' => '98%',
       'impact' => 'Pemberdayaan UMKM & Pekerja Lokal',
-      'reviewed' => false,
+      'reviewed' => \App\Models\ProductReview::where('order_id', $order->id)->exists(),
       'timeline' => $timeline,
     ];
   }

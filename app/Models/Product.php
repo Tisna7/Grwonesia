@@ -29,6 +29,11 @@ class Product extends Model
     'ai_seo_suggestions',
   ];
 
+  protected $appends = [
+    'image_url',
+    'image',
+  ];
+
   protected function casts(): array
   {
     return [
@@ -37,6 +42,11 @@ class Product extends Model
       'ai_photo_analysis' => 'array',
       'ai_seo_suggestions' => 'array',
     ];
+  }
+
+  public function getImageAttribute(): string
+  {
+    return $this->image_url;
   }
 
   public function business(): BelongsTo

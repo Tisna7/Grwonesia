@@ -13,7 +13,7 @@ function grownesiaUserDashboard() {
 
     userProfile: initData.userProfile || {},
 
-    favorites: [1, 3],
+    favorites: initData.favorites || [],
 
     reviews: initData.reviews || [],
 
@@ -210,7 +210,11 @@ function grownesiaUserDashboard() {
           headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
         });
         if (response.ok) {
-          this.cart = await response.json();
+          let loaded = await response.json();
+          this.cart = (loaded || []).map(item => ({
+            ...item,
+            selected: item.selected !== false
+          }));
         }
       } catch (e) {
         console.error('Failed to load cart from database:', e);
@@ -308,35 +312,143 @@ function grownesiaUserDashboard() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
 
-    submitProductReview() {
+    async confirmOrderReceived(order) {
+      if (!order) return;
+      const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      
+      try {
+        let response = await fetch('/orders/confirm-received', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': token || ''
+          },
+          body: JSON.stringify({ order_id: order.db_id || order.id })
+        });
+
+        if (response.ok) {
+          let data = await response.json();
+          if (data && data.success) {
+            order.status = 'Selesai';
+            alert(data.message || 'Pesanan telah berhasil dikonfirmasi diterima!');
+            this.openWriteReview(order);
+          }
+        } else {
+          order.status = 'Selesai';
+          this.openWriteReview(order);
+        }
+      } catch (e) {
+        console.error('Failed to confirm order received:', e);
+        order.status = 'Selesai';
+        this.openWriteReview(order);
+      }
+    },
+
+    async submitProductReview() {
       if (!this.newReviewForm.comment.trim()) {
         alert('Mohon tuliskan ulasan pengalaman belanja Anda.');
         return;
       }
+      if (this.newReviewForm.comment.trim().length < 10) {
+        alert('Ulasan produk minimal terdiri dari 10 karakter.');
+        return;
+      }
 
-      this.reviews.unshift({
-        id: Date.now(),
-        productId: this.reviewingOrder.productId,
-        userName: this.userProfile.name,
-        rating: parseInt(this.newReviewForm.rating),
-        date: 'Hari ini',
-        comment: this.newReviewForm.comment,
-        verified: true
-      });
+      const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      const prodId = this.reviewingOrder ? this.reviewingOrder.productId : 1;
+      const orderDbId = this.reviewingOrder ? (this.reviewingOrder.db_id || this.reviewingOrder.id) : null;
+      const commentText = this.newReviewForm.comment.trim();
+      const ratingVal = parseInt(this.newReviewForm.rating) || 5;
 
-      this.reviewingOrder.reviewed = true;
+      try {
+        let response = await fetch('/user/reviews', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': token || ''
+          },
+          body: JSON.stringify({
+            product_id: prodId,
+            order_db_id: orderDbId,
+            rating: ratingVal,
+            comment: commentText
+          })
+        });
 
-      alert('Ulasan Anda telah berhasil dipublikasikan! Terima kasih telah mengulas produk UMKM mitra.');
-      this.activeTab = 'orders';
+        let data = await response.json().catch(() => ({}));
+
+        if (response.ok && data && data.success) {
+          if (data.review) {
+            this.reviews.unshift(data.review);
+          }
+          if (this.reviewingOrder) {
+            this.reviewingOrder.reviewed = true;
+          }
+          alert('Ulasan Anda telah berhasil disimpan ke database dan dipublikasikan!');
+          this.activeTab = 'orders';
+        } else {
+          if (this.reviewingOrder) {
+            this.reviewingOrder.reviewed = true;
+          }
+          alert(data.message || 'Anda sudah memberikan ulasan untuk pesanan ini.');
+          this.activeTab = 'orders';
+        }
+      } catch (e) {
+        console.error('Error submitting review:', e);
+        if (this.reviewingOrder) {
+          this.reviewingOrder.reviewed = true;
+        }
+        alert('Ulasan sudah pernah dikirim atau terjadi kendala jaringan.');
+        this.activeTab = 'orders';
+      }
     },
 
-    toggleFavorite(product) {
-      const id = product.id;
-      const idx = this.favorites.indexOf(id);
-      if (idx > -1) {
-        this.favorites.splice(idx, 1);
+    async toggleFavorite(product) {
+      if (!product || !product.id) return;
+      const id = parseInt(product.id);
+      const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+      const wasFavorite = this.favorites.includes(id);
+      if (wasFavorite) {
+        this.favorites = this.favorites.filter(favId => favId !== id);
       } else {
         this.favorites.push(id);
+      }
+
+      try {
+        let response = await fetch('/favorites/toggle', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': token || ''
+          },
+          body: JSON.stringify({ product_id: id })
+        });
+
+        if (response.ok) {
+          let data = await response.json();
+          if (data && data.success && Array.isArray(data.favorites)) {
+            this.favorites = data.favorites;
+          }
+        } else {
+          // Revert if request failed
+          if (wasFavorite) {
+            if (!this.favorites.includes(id)) this.favorites.push(id);
+          } else {
+            this.favorites = this.favorites.filter(favId => favId !== id);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to toggle favorite in database:', e);
+        if (wasFavorite) {
+          if (!this.favorites.includes(id)) this.favorites.push(id);
+        } else {
+          this.favorites = this.favorites.filter(favId => favId !== id);
+        }
       }
     },
 
@@ -398,20 +510,38 @@ function grownesiaUserDashboard() {
       });
     },
 
+    get allSelected() {
+      return this.cart.length > 0 && this.cart.every(i => i.selected !== false);
+    },
+
+    toggleSelectAll(checked) {
+      this.cart.forEach(i => { i.selected = checked; });
+      this.saveCart();
+    },
+
+    get selectedCartItems() {
+      return this.cart.filter(i => i.product && (i.selected !== false));
+    },
+
+    get selectedCartTotalCount() {
+      return this.selectedCartItems.reduce((sum, item) => sum + (item.product ? item.qty : 0), 0);
+    },
+
     get cartTotalCount() {
       return this.cart.reduce((sum, item) => sum + (item.product ? item.qty : 0), 0);
     },
 
     get cartTotalPrice() {
-      return this.cart.reduce((sum, item) => sum + (item.product ? (item.product.price * item.qty) : 0), 0);
+      return this.selectedCartItems.reduce((sum, item) => sum + (item.product ? (item.product.price * item.qty) : 0), 0);
     },
 
     addToCart(product, redirect = true) {
       const idx = this.cart.findIndex(i => i.product && i.product.id === product.id);
       if (idx > -1) {
         this.cart[idx].qty++;
+        this.cart[idx].selected = true;
       } else {
-        this.cart.push({ product: product, qty: 1 });
+        this.cart.push({ product: product, qty: 1, selected: true });
       }
       this.saveCart();
       if (redirect) {
@@ -429,31 +559,37 @@ function grownesiaUserDashboard() {
     },
 
     calculateCartImpactText() {
-      if (this.cart.length === 0) return '0 Pekerja';
-      let count = this.cart.reduce((acc, item) => acc + (item.product ? (2 * item.qty) : 0), 0);
+      const selected = this.selectedCartItems;
+      if (selected.length === 0) return '0 Pekerja';
+      let count = selected.reduce((acc, item) => acc + (item.product ? (2 * item.qty) : 0), 0);
       return count + ' Pekerja Lokal & ' + Math.ceil(count / 2) + ' Desa Terbantu';
     },
 
     async processPaymentSuccess() {
+      const selected = this.selectedCartItems;
+      if (selected.length === 0) {
+        alert('Silakan pilih setidaknya satu produk di keranjang untuk di-checkout.');
+        return;
+      }
+
       const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-      if (this.cart.length > 0) {
-        try {
-          await fetch('/checkout', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-TOKEN': token || ''
-            },
-            body: JSON.stringify({ cart: this.cart })
-          });
-        } catch (err) {
-          console.error('Gagal mengirim pesanan ke server:', err);
-        }
+      try {
+        await fetch('/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': token || ''
+          },
+          body: JSON.stringify({ cart: selected })
+        });
+      } catch (err) {
+        console.error('Gagal mengirim pesanan ke server:', err);
       }
 
       const newOrderId = 'GRW-2026-' + Math.floor(1000 + Math.random() * 9000);
-      const firstProd = this.cart.length > 0 ? this.cart[0].product : (this.products[0] || { id: 1, name: 'Produk UMKM' });
-      const itemsSummary = this.cart.length > 0 ? this.cart.map(c => `${c.product.name} (${c.qty}x)`).join(', ') : 'Pesanan UMKM';
+      const firstProd = selected[0].product;
+      const itemsSummary = selected.map(c => `${c.product.name} (${c.qty}x)`).join(', ');
 
       this.ordersHistory.unshift({
         id: newOrderId,
@@ -462,7 +598,7 @@ function grownesiaUserDashboard() {
         productName: firstProd.name,
         items: itemsSummary,
         total: this.cartTotalPrice,
-        status: 'Selesai',
+        status: 'Diproses',
         impact: '3 Pekerja Terbantu',
         reviewed: false
       });
@@ -470,7 +606,7 @@ function grownesiaUserDashboard() {
       this.lastOrderImpactSummary = "3 Pekerja Lokal, 1 Desa Berkembang, & 2 Penenun Terbantu";
       this.userImpact.totalJobs += 3;
       this.userImpact.villagesHelped += 1;
-      this.cart = [];
+      this.cart = this.cart.filter(i => i.product && i.selected === false);
       this.saveCart();
       this.activeTab = 'success-impact';
       window.scrollTo({ top: 0, behavior: 'smooth' });

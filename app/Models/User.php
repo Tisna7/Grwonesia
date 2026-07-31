@@ -64,6 +64,11 @@ class User extends Authenticatable
     return $this->hasOne(Business::class);
   }
 
+  public function favorites(): \Illuminate\Database\Eloquent\Relations\HasMany
+  {
+    return $this->hasMany(Favorite::class);
+  }
+
   public function isBusiness(): bool
   {
     return $this->role === UserRole::Business;
