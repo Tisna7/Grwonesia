@@ -11,22 +11,26 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-  public function index(): JsonResponse
+  public function index(Request $request)
   {
-    $userId = Auth::id();
+    if ($request->wantsJson() || $request->ajax()) {
+      $userId = Auth::id();
 
-    $items = CartItem::with('product')
-      ->where('user_id', $userId)
-      ->get();
+      $items = CartItem::with('product')
+        ->where('user_id', $userId)
+        ->get();
 
-    $formatted = $items->map(function ($item) {
-      return [
-        'product' => $item->product,
-        'qty' => $item->qty,
-      ];
-    });
+      $formatted = $items->map(function ($item) {
+        return [
+          'product' => $item->product,
+          'qty' => $item->qty,
+        ];
+      });
 
-    return response()->json($formatted);
+      return response()->json($formatted);
+    }
+
+    return app(\App\Http\Controllers\User\DashboardController::class)->index($request);
   }
 
   public function sync(Request $request): JsonResponse

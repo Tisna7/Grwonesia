@@ -8,39 +8,32 @@ use Tests\TestCase;
 
 class RegistrationTest extends TestCase
 {
-    use RefreshDatabase;
+  use RefreshDatabase;
 
-    public function test_business_registration_creates_user_and_business(): void
-    {
-        $response = $this->post('/register', [
-            'name' => 'Pemilik Usaha',
-            'email' => 'owner@test.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'business_name' => 'Warung Kopi Test',
-            'business_category' => 'Kuliner',
-            'business_city' => 'Bandung',
-        ]);
+  public function test_business_registration_creates_user_and_business(): void
+  {
+    $response = $this->post('/register', [
+      'name' => 'Pemilik Usaha',
+      'email' => 'owner@test.com',
+      'password' => 'password123',
+      'password_confirmation' => 'password123',
+    ]);
 
-        $response->assertRedirect(route('business.dashboard'));
+    $response->assertRedirect(route('verification.notice'));
 
-        $user = User::where('email', 'owner@test.com')->first();
-        $this->assertNotNull($user);
-        $this->assertTrue($user->isBusiness());
-        $this->assertNotNull($user->business);
-        $this->assertSame('Warung Kopi Test', $user->business->name);
-        $this->assertAuthenticatedAs($user);
-    }
+    $user = User::where('email', 'owner@test.com')->first();
+    $this->assertNotNull($user);
+    $this->assertSame('pending', $user->status);
+  }
 
-    public function test_registration_requires_business_fields(): void
-    {
-        $response = $this->post('/register', [
-            'name' => 'Tanpa Usaha',
-            'email' => 'x@test.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-        ]);
+  public function test_registration_requires_business_fields(): void
+  {
+    $response = $this->post('/register', [
+      'name' => '',
+      'email' => 'not-an-email',
+      'password' => '123',
+    ]);
 
-        $response->assertSessionHasErrors(['business_name', 'business_category']);
-    }
+    $response->assertSessionHasErrors(['name', 'email', 'password']);
+  }
 }

@@ -14,6 +14,8 @@ class CartDbTest extends TestCase
 
   public function test_guest_can_sync_and_load_cart_via_session()
   {
+    $user = User::factory()->create(['status' => 'terverifikasi']);
+    $this->actingAs($user);
     $this->startSession();
 
     $product = Product::factory()->create();
@@ -45,7 +47,7 @@ class CartDbTest extends TestCase
 
   public function test_authenticated_user_can_sync_and_load_cart()
   {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['status' => 'terverifikasi']);
     $product = Product::factory()->create();
 
     // Sync cart

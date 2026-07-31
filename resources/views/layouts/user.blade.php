@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Grownesia User Dashboard - Ekosistem Pemberdayaan UMKM Indonesia Berbasis AI">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>Dashboard User — Grownesia AI</title>
+  <title x-text="getPageTitle() + ' — Grownesia AI'">Katalog Produk — Grownesia AI</title>
 
   <!-- Google Fonts Harmonization with Business Layout -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,7 +25,8 @@
 
   <!-- LEFT SIDEBAR NAVIGATION (LOGGED-IN USER LAYOUT) -->
   <aside
-    class="w-64 glass-card !rounded-none border-r border-primary-400/15 min-h-screen flex flex-col justify-between shrink-0 sticky top-0 h-screen z-40 hidden md:flex">
+    class="fixed inset-y-0 left-0 z-40 w-64 glass-card !rounded-none border-r border-primary-400/15 h-screen flex flex-col justify-between shrink-0 transition-transform duration-300 md:translate-x-0"
+    :class="sidebarMobileOpen ? 'translate-x-0' : '-translate-x-full'">
 
     <!-- Sidebar Brand & User Profile Card -->
     <div class="p-5 border-b border-primary-400/10 space-y-4">
@@ -43,7 +44,7 @@
       </div>
 
       <!-- Profile Info Widget Card -->
-      <button @click="activeTab = 'profile'"
+      <button @click="activeTab = 'profile'; sidebarMobileOpen = false"
         :class="activeTab === 'profile' ? 'bg-purple-800/60 border-purple-400/50 shadow-md' : 'bg-purple-950/60 border-purple-500/20 hover:bg-purple-900/40'"
         class="w-full p-3 rounded-2xl border text-xs flex items-center justify-between transition text-left group">
         <div class="flex items-center gap-2.5 min-w-0">
@@ -70,7 +71,7 @@
       <div class="text-[10px] uppercase font-extrabold tracking-wider text-purple-400/70 px-3 pt-1 pb-2">Navigasi Utama
       </div>
 
-      <button @click="activeTab = 'katalog'"
+      <a href="/produk" @click.prevent="activeTab = 'katalog'; sidebarMobileOpen = false"
         :class="activeTab === 'katalog' || activeTab === 'detail' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center gap-3">
         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,9 +79,9 @@
             d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
         </svg>
         <span>Katalog Produk UMKM</span>
-      </button>
+      </a>
 
-      <button @click="activeTab = 'ai-assistant'"
+      <a href="/ai-assistant" @click.prevent="activeTab = 'ai-assistant'; sidebarMobileOpen = false"
         :class="activeTab === 'ai-assistant' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -90,9 +91,9 @@
           <span>AI Personal Shopper</span>
         </div>
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-      </button>
+      </a>
 
-      <button @click="activeTab = 'ai-gift'"
+      <a href="/ai-gift" @click.prevent="activeTab = 'ai-gift'; sidebarMobileOpen = false"
         :class="activeTab === 'ai-gift' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center gap-3">
         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,9 +101,9 @@
             d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5a2 2 0 10-2 2h2z" />
         </svg>
         <span>Rekomendasi Kado AI</span>
-      </button>
+      </a>
 
-      <button @click="activeTab = 'ai-compare'"
+      <a href="/ai-compare" @click.prevent="activeTab = 'ai-compare'; sidebarMobileOpen = false"
         :class="activeTab === 'ai-compare' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center gap-3">
         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,13 +111,13 @@
             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
         <span>Komparasi Produk AI</span>
-      </button>
+      </a>
 
       <!-- CATEGORY 2: BELANJA & TRANSAKSI -->
       <div class="text-[10px] uppercase font-extrabold tracking-wider text-purple-400/70 px-3 pt-4 pb-2">Belanja &
         Transaksi</div>
 
-      <button @click="activeTab = 'cart'"
+      <a href="/cart" @click.prevent="activeTab = 'cart'; sidebarMobileOpen = false"
         :class="activeTab === 'cart' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -128,9 +129,9 @@
         </div>
         <span x-show="cartTotalCount > 0" x-text="cartTotalCount"
           class="bg-fuchsia-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow"></span>
-      </button>
+      </a>
 
-      <button @click="activeTab = 'favorites'"
+      <a href="/favorites" @click.prevent="activeTab = 'favorites'; sidebarMobileOpen = false"
         :class="activeTab === 'favorites' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -142,9 +143,9 @@
         </div>
         <span x-show="favorites.length > 0" x-text="favorites.length"
           class="bg-red-500/20 text-red-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-red-500/30"></span>
-      </button>
+      </a>
 
-      <button @click="activeTab = 'orders'"
+      <a href="/orders" @click.prevent="activeTab = 'orders'; sidebarMobileOpen = false"
         :class="activeTab === 'orders' || activeTab === 'write-review' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -156,9 +157,9 @@
         </div>
         <span x-text="ordersHistory.length"
           class="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-500/30"></span>
-      </button>
+      </a>
 
-      <button @click="activeTab = 'tracking'"
+      <a href="/tracking" @click.prevent="activeTab = 'tracking'; sidebarMobileOpen = false"
         :class="activeTab === 'tracking' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -170,13 +171,13 @@
         </div>
         <span
           class="bg-blue-500/20 text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">Live</span>
-      </button>
+      </a>
 
       <!-- CATEGORY 3: PENGATURAN AKUN -->
       <div class="text-[10px] uppercase font-extrabold tracking-wider text-purple-400/70 px-3 pt-4 pb-2">Pengaturan Akun
       </div>
 
-      <button @click="activeTab = 'profile'"
+      <a href="/profile" @click.prevent="activeTab = 'profile'; sidebarMobileOpen = false"
         :class="activeTab === 'profile' ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-900/40 border border-purple-400/30' : 'text-slate-300 hover:bg-purple-900/40 hover:text-white'"
         class="w-full px-3.5 py-2.5 rounded-xl transition flex items-center gap-3">
         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,7 +185,7 @@
             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
         <span>Profil & Pengaturan</span>
-      </button>
+      </a>
     </div>
 
     <!-- Sidebar Footer & Logout Button -->
@@ -204,15 +205,24 @@
     </div>
   </aside>
 
+  <!-- Mobile sidebar overlay -->
+  <div x-show="sidebarMobileOpen" x-cloak @click="sidebarMobileOpen = false"
+    class="fixed inset-0 z-30 bg-black/60 md:hidden"></div>
+
   <!-- RIGHT MAIN WORKSPACE AREA -->
-  <div class="flex-1 min-w-0 flex flex-col min-h-screen">
+  <div class="md:pl-64 flex-1 min-w-0 flex flex-col min-h-screen">
 
     <!-- TOP HEADER FOR DASHBOARD WORKSPACE -->
     <header
       class="sticky top-0 z-30 glass-card !rounded-none border-b border-primary-400/10 px-6 py-4 flex items-center justify-between backdrop-blur-xl">
       <div class="flex items-center gap-4">
-        <h2 class="text-lg font-bold text-white font-heading">
-          Selamat datang, <span x-text="userProfile.name"></span>!
+        <button class="md:hidden text-slate-300 p-1" @click="sidebarMobileOpen = true">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <h2 class="text-sm sm:text-lg font-bold text-white font-heading truncate" x-text="getPageTitle()">
+          Katalog Produk
         </h2>
         <span
           class="hidden lg:inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-400/30">
@@ -304,551 +314,19 @@
   </div>
 
   <script>
-    function grownesiaUserDashboard() {
-      return {
-        products: @json($products ?? []),
-        searchQuery: '',
-        activeCategory: 'all',
-        selectedImpactFilter: 'all',
-        activeTab: 'katalog',
-        showFloatingAiWidget: false,
-
-        userProfile: @json($userProfile ?? []),
-
-        favorites: [1, 3],
-
-        reviews: @json($reviews ?? []),
-
-        ordersHistory: @json($ordersHistory ?? []),
-
-        trackingOrder: null,
-        copyToast: false,
-        isRefreshingTracking: false,
-
-        reviewingOrder: null,
-        newReviewForm: {
-          rating: 5,
-          comment: ''
-        },
-
-        notifications: @json($notifications ?? []),
-
-        unreadNotifCount: @json($unreadNotifCount ?? 0),
-
-        selectedProductDetail: null,
-
-        userImpact: @json($userImpact ?? ['totalJobs' => 8, 'villagesHelped' => 3, 'craftswomenHelped' => 5]),
-
-        cart: [],
-        selectedPaymentMethod: 'qris',
-        lastOrderImpactSummary: '',
-
-        customChatInput: '',
-        aiIsTyping: false,
-        chatMessages: [
-          {
-            sender: 'ai',
-            text: 'Halo Budi! Saya AI Assistant Anda. Silakan tanyakan saran produk atau hadiah yang Anda butuhkan.',
-          }
-        ],
-
-        giftBudget: 300000,
-        giftRecipientMode: 'preset',
-        giftRecipient: 'Hadiah untuk Ibu / Orang Tua (Usia 50th)',
-        customGiftRecipientInput: '',
-        generatedBundle: null,
-
-        async saveCart() {
-          const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-          try {
-            await fetch('/cart/sync', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': token || ''
-              },
-              body: JSON.stringify({ cart: this.cart })
-            });
-          } catch (e) {
-            console.error('Failed to sync cart to database:', e);
-          }
-        },
-
-        async loadCart() {
-          try {
-            let response = await fetch('/cart');
-            if (response.ok) {
-              this.cart = await response.json();
-            }
-          } catch (e) {
-            console.error('Failed to load cart from database:', e);
-          }
-        },
-
-        async initDashboard() {
-          await this.loadCart();
-          if (this.products.length >= 2) {
-            this.selectedProductDetail = this.products[0];
-            this.compareProduct1 = this.products[0];
-            this.compareProduct2 = this.products[4] || this.products[1];
-            this.compareProduct1Id = this.compareProduct1.id;
-            this.compareProduct2Id = this.compareProduct2.id;
-            this.generateAiComparison();
-          }
-          if (this.ordersHistory.length > 0) {
-            this.trackingOrder = this.ordersHistory[1] || this.ordersHistory[0];
-          }
-          this.generateGiftBundle();
-        },
-
-        openTracking(order) {
-          this.trackingOrder = order;
-          this.activeTab = 'tracking';
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        },
-
-        copyTrackingNumber(resi) {
-          if (navigator.clipboard) {
-            navigator.clipboard.writeText(resi);
-          }
-          this.copyToast = true;
-          setTimeout(() => { this.copyToast = false; }, 2500);
-        },
-
-        async refreshTracking() {
-          this.isRefreshingTracking = true;
-          if (this.trackingOrder && this.trackingOrder.db_id) {
-            try {
-              let res = await fetch('/user/shipping/' + this.trackingOrder.db_id);
-              if (res.ok) {
-                let data = await res.json();
-                if (data.success && data.order) {
-                  this.trackingOrder = data.order;
-                  let idx = this.ordersHistory.findIndex(o => o.db_id === data.order.db_id);
-                  if (idx !== -1) {
-                    this.ordersHistory[idx] = data.order;
-                  }
-                }
-              }
-            } catch (err) {
-              console.error('Error refreshing tracking info:', err);
-            }
-          }
-          setTimeout(() => { this.isRefreshingTracking = false; }, 600);
-        },
-
-        openProductDetail(product) {
-          this.selectedProductDetail = product;
-          this.activeTab = 'detail';
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        },
-
-        getProductReviews(productId) {
-          return this.reviews.filter(r => r.productId === productId);
-        },
-
-        openWriteReview(order) {
-          this.reviewingOrder = order;
-          this.newReviewForm.rating = 5;
-          this.newReviewForm.comment = '';
-          this.activeTab = 'write-review';
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        },
-
-        submitProductReview() {
-          if (!this.newReviewForm.comment.trim()) {
-            alert('Mohon tuliskan ulasan pengalaman belanja Anda.');
-            return;
-          }
-
-          this.reviews.unshift({
-            id: Date.now(),
-            productId: this.reviewingOrder.productId,
-            userName: this.userProfile.name,
-            rating: parseInt(this.newReviewForm.rating),
-            date: 'Hari ini',
-            comment: this.newReviewForm.comment,
-            verified: true
-          });
-
-          this.reviewingOrder.reviewed = true;
-
-          alert('Ulasan Anda telah berhasil dipublikasikan! Terima kasih telah mengulas produk UMKM mitra.');
-          this.activeTab = 'orders';
-        },
-
-        toggleFavorite(product) {
-          const id = product.id;
-          const idx = this.favorites.indexOf(id);
-          if (idx > -1) {
-            this.favorites.splice(idx, 1);
-          } else {
-            this.favorites.push(id);
-          }
-        },
-
-        isFavorite(productId) {
-          return this.favorites.includes(productId);
-        },
-
-        get favoriteProducts() {
-          return this.products.filter(p => this.favorites.includes(p.id));
-        },
-
-        markAllNotifRead() {
-          this.unreadNotifCount = 0;
-        },
-
-        saveProfile() {
-          alert('Profil dan Alamat berhasil diperbarui!');
-          this.activeTab = 'katalog';
-        },
-
-        get filteredProducts() {
-          return this.products.filter(p => {
-            const matchesSearch = p.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-              p.umkm.toLowerCase().includes(this.searchQuery.toLowerCase());
-            const matchesCat = this.activeCategory === 'all' || p.category === this.activeCategory;
-            return matchesSearch && matchesCat;
-          });
-        },
-
-        get cartTotalCount() {
-          return this.cart.reduce((sum, item) => sum + (item.product ? item.qty : 0), 0);
-        },
-
-        get cartTotalPrice() {
-          return this.cart.reduce((sum, item) => sum + (item.product ? (item.product.price * item.qty) : 0), 0);
-        },
-
-        addToCart(product, redirect = true) {
-          const idx = this.cart.findIndex(i => i.product && i.product.id === product.id);
-          if (idx > -1) {
-            this.cart[idx].qty++;
-          } else {
-            this.cart.push({ product: product, qty: 1 });
-          }
-          this.saveCart();
-          if (redirect) {
-            this.activeTab = 'cart';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        },
-
-        updateQty(idx, change) {
-          this.cart[idx].qty += change;
-          if (this.cart[idx].qty <= 0) {
-            this.cart.splice(idx, 1);
-          }
-          this.saveCart();
-        },
-
-        calculateCartImpactText() {
-          if (this.cart.length === 0) return '0 Pekerja';
-          let count = this.cart.reduce((acc, item) => acc + (item.product ? (2 * item.qty) : 0), 0);
-          return count + ' Pekerja Lokal & ' + Math.ceil(count / 2) + ' Desa Terbantu';
-        },
-
-        async processPaymentSuccess() {
-          const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-          if (this.cart.length > 0) {
-            try {
-              await fetch('/checkout', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRF-TOKEN': token || ''
-                },
-                body: JSON.stringify({ cart: this.cart })
-              });
-            } catch (err) {
-              console.error('Gagal mengirim pesanan ke server:', err);
-            }
-          }
-
-          const newOrderId = 'GRW-2026-' + Math.floor(1000 + Math.random() * 9000);
-          const firstProd = this.cart.length > 0 ? this.cart[0].product : (this.products[0] || { id: 1, name: 'Produk UMKM' });
-          const itemsSummary = this.cart.length > 0 ? this.cart.map(c => `${c.product.name} (${c.qty}x)`).join(', ') : 'Pesanan UMKM';
-
-          this.ordersHistory.unshift({
-            id: newOrderId,
-            date: 'Hari ini',
-            productId: firstProd.id,
-            productName: firstProd.name,
-            items: itemsSummary,
-            total: this.cartTotalPrice,
-            status: 'Selesai',
-            impact: '3 Pekerja Terbantu',
-            reviewed: false
-          });
-
-          this.lastOrderImpactSummary = "3 Pekerja Lokal, 1 Desa Berkembang, & 2 Penenun Terbantu";
-          this.userImpact.totalJobs += 3;
-          this.userImpact.villagesHelped += 1;
-          this.cart = [];
-          this.saveCart();
-          this.activeTab = 'success-impact';
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        },
-
-        scrollToBottom() {
-          this.$nextTick(() => {
-            ['#chatContainer', '#fullChatContainer'].forEach(selector => {
-              const el = document.querySelector(selector);
-              if (el) {
-                el.scrollTo({
-                  top: el.scrollHeight,
-                  behavior: 'smooth'
-                });
-              }
-            });
-          });
-        },
-
-        async sendAiQuery(queryText) {
-          if (!queryText.trim()) return;
-          this.chatMessages.push({ sender: 'user', text: queryText });
-          this.customChatInput = '';
-          this.aiIsTyping = true;
-          this.scrollToBottom();
-
-          const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-          try {
-            let response = await fetch('/user/ai/chat', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': token || ''
-              },
-              body: JSON.stringify({ message: queryText })
-            });
-
-            this.aiIsTyping = false;
-
-            if (!response.ok) {
-              console.warn('AI Chat request returned status:', response.status);
-              this.chatMessages.push({
-                sender: 'ai',
-                text: 'Grownesia AI Shopping Assistant siap membantu Anda menjelajahi produk-produk UMKM lokal pilihan.',
-                products: [this.products[0]]
-              });
-              this.scrollToBottom();
-              return;
-            }
-
-            let data = await response.json();
-
-            if (data && data.reply) {
-              const replyLower = data.reply.toLowerCase();
-
-              // Filter products mentioned in the AI's reply
-              matchedProds = this.products.filter(p => {
-                const pName = p.name.toLowerCase();
-                const stopWords = ['original', 'premium', 'asli', 'signature', 'modern', 'paket', '200g', '250g', '500ml', '350ml', 'isi', '10', 'reserve', 'klasik', '500g', 'level', '5', 'tulis', 'motif', 'cap', 'ikat', 'handmade', 'royal', 'violet'];
-                const words = pName.split(/[\s,\-\./]+/).filter(w => w.length >= 3 && !stopWords.includes(w));
-
-                if (words.length === 0) return false;
-                const matchCount = words.filter(w => replyLower.includes(w)).length;
-                return matchCount >= Math.min(2, words.length);
-              });
-
-              // Fallback to user query matching if no products are explicitly mentioned in the reply
-              if (matchedProds.length === 0) {
-                const qLower = queryText.toLowerCase();
-                const words = qLower.split(' ').filter(w => w.length >= 3 && !['ada', 'apa', 'yang', 'dan', 'atau', 'saya', 'bisa', 'tolong', 'produk'].includes(w));
-                if (words.length > 0) {
-                  matchedProds = this.products.filter(p => {
-                    const pName = (p.name || '').toLowerCase();
-                    const pCat = (p.category || '').toLowerCase();
-                    const pDesc = (p.description || '').toLowerCase();
-                    return words.some(w => pName.includes(w) || pCat.includes(w) || pDesc.includes(w));
-                  }).slice(0, 3);
-                }
-              }
-
-              if (matchedProds.length === 0) {
-                matchedProds = [this.products[0], this.products[1]].filter(Boolean);
-              }
-
-              this.chatMessages.push({
-                sender: 'ai',
-                text: data.reply,
-                products: matchedProds.filter(Boolean)
-              });
-            } else {
-              this.chatMessages.push({
-                sender: 'ai',
-                text: 'Grownesia AI Assistant siap membantu Anda menjelajahi produk-produk UMKM lokal pilihan.',
-                products: [this.products[0]]
-              });
-            }
-            this.scrollToBottom();
-          } catch (err) {
-            console.error('Error fetching AI Chat response:', err);
-            this.aiIsTyping = false;
-            this.chatMessages.push({
-              sender: 'ai',
-              text: 'Rekomendasi dari Grownesia AI Shopping Assistant untuk Anda:',
-              products: [this.products[0]]
-            });
-            this.scrollToBottom();
-          }
-        },
-
-        async generateGiftBundle() {
-          let recipientText = (this.giftRecipientMode === 'custom' && this.customGiftRecipientInput.trim() !== '')
-            ? this.customGiftRecipientInput
-            : this.giftRecipient;
-
-          const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-          try {
-            let response = await fetch('/user/ai/gift-recommend', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': token || ''
-              },
-              body: JSON.stringify({
-                query: recipientText,
-                budget: this.giftBudget
-              })
-            });
-
-            if (response.ok) {
-              let data = await response.json();
-              if (data && data.success && data.products) {
-                this.generatedBundle = {
-                  recipientLabel: recipientText,
-                  bundleName: data.bundle_name || 'Paket Spesial UMKM',
-                  items: data.products,
-                  totalPrice: data.total_price || 0,
-                  impact: (data.products.length * 2) + ' Pekerja Lokal & 1 Desa Terbantu',
-                  aiReasoning: data.narrative || `AI menyusun paket kado bernilai tinggi sesuai anggaran Anda.`,
-                  impactStory: data.impact_story || ''
-                };
-                return;
-              }
-            } else {
-              console.warn('Gift recommend request returned status:', response.status);
-            }
-          } catch (err) {
-            console.error('Error fetching AI Gift Recommendation:', err);
-          }
-
-          // Fallback local logic if server offline
-          let sortedProducts = [...this.products];
-          const qLower = recipientText.toLowerCase();
-
-          if (qLower.includes('dosen') || qLower.includes('kantor') || qLower.includes('rekan') || qLower.includes('formal') || qLower.includes('guru')) {
-            sortedProducts.sort((a, b) => (a.category === 'kopi' || a.category === 'batik') ? -1 : 1);
-          } else if (qLower.includes('ibu') || qLower.includes('wanita') || qLower.includes('perempuan') || qLower.includes('bunda')) {
-            sortedProducts.sort((a, b) => (a.category === 'batik' || a.category === 'kerajinan') ? -1 : 1);
-          }
-
-          let total = 0;
-          let items = [];
-
-          for (let p of sortedProducts) {
-            if (total + p.price <= this.giftBudget) {
-              items.push(p);
-              total += p.price;
-            }
-          }
-
-          this.generatedBundle = {
-            recipientLabel: recipientText,
-            bundleName: 'Paket Spesial UMKM',
-            items: items,
-            totalPrice: total,
-            impact: items.length * 2 + ' Pekerja Lokal & 1 Desa Terbantu',
-            aiReasoning: `AI menganalisis kriteria "${recipientText}" dan menyusun paket berisi ${items.length} produk pilihan UMKM dengan total harga ${this.formatRupiah(total)}.`
-          };
-        },
-
-        addBundleToCart() {
-          if (!this.generatedBundle || !this.generatedBundle.items.length) return;
-          for (let item of this.generatedBundle.items) {
-            this.addToCart(item);
-          }
-        },
-
-        async generateAiComparison() {
-          this.compareProduct1 = this.products.find(p => p.id == this.compareProduct1Id) || null;
-          this.compareProduct2 = this.products.find(p => p.id == this.compareProduct2Id) || null;
-
-          let p1 = this.compareProduct1;
-          let p2 = this.compareProduct2;
-          if (!p1 || !p2) return;
-
-          this.aiCompareAnalysis = {
-            verdict: 'AI sedang menganalisis perbandingan kedua produk...',
-            recommendation: ''
-          };
-
-          const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-          try {
-            let response = await fetch('/user/ai/compare', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': token || ''
-              },
-              body: JSON.stringify({
-                product1_id: p1.id,
-                product2_id: p2.id
-              })
-            });
-
-            if (response.ok) {
-              let data = await response.json();
-              if (data && data.success) {
-                this.aiCompareAnalysis = {
-                  verdict: data.verdict,
-                  recommendation: data.recommendation
-                };
-                return;
-              }
-            }
-          } catch (err) {
-            console.error('Error fetching AI Comparison:', err);
-          }
-
-          const price1Fmt = (prod) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(prod.price);
-          this.aiCompareAnalysis = {
-            verdict: (p1.price) < (p2.price)
-              ? `${p1.name} (${price1Fmt(p1)}) menawarkan pilihan lebih hemat dari ${p2.name} (${price1Fmt(p2)}).`
-              : `${p2.name} (${price1Fmt(p2)}) menawarkan pilihan lebih hemat dari ${p1.name} (${price1Fmt(p1)}).`,
-            recommendation: `Pilih ${p1.price < p2.price ? p1.name : p2.name} untuk alternatif hemat.`
-          };
-        },
-
-        formatRupiah(number) {
-          return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
-        },
-
-        formatAiText(text) {
-          if (!text) return '';
-          let str = String(text);
-          str = str.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-amber-300">$1</strong>');
-          str = str.replace(/\*(.*?)\*/g, '<em class="italic text-purple-200">$1</em>');
-          str = str.replace(/\n\* /g, '<br>• ').replace(/\n- /g, '<br>• ');
-          str = str.replace(/\n/g, '<br>');
-          return str;
-        }
-      }
-    }
+    window.dashboardInitialData = {
+      products: @json($products ?? []),
+      activeTab: @json($activeTab ?? 'katalog'),
+      initialProductId: @json($initialProductId ?? null),
+      userProfile: @json($userProfile ?? []),
+      reviews: @json($reviews ?? []),
+      ordersHistory: @json($ordersHistory ?? []),
+      notifications: @json($notifications ?? []),
+      unreadNotifCount: @json($unreadNotifCount ?? 0),
+      userImpact: @json($userImpact ?? ['totalJobs' => 8, 'villagesHelped' => 3, 'craftswomenHelped' => 5])
+    };
   </script>
+  <script src="{{ asset('js/user-dashboard.js') }}"></script>
   <!-- FLOATING AI ASSISTANT OVERLAY WIDGET (DESAIN.MD SPEC 4.1) -->
   <div class="fixed bottom-6 right-6 z-50">
     <!-- Floating Trigger Button with AI Pulsing Glow -->

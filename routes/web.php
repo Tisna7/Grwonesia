@@ -39,20 +39,40 @@ Route::middleware('guest')->group(function () {
   Route::post('/login', [AuthController::class, 'login']);
   Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
   Route::post('/register', [AuthController::class, 'register']);
+
+  // Email OTP Verification
+  Route::get('/verify-email', [AuthController::class, 'showVerifyForm'])->name('verification.notice');
+  Route::post('/verify-email', [AuthController::class, 'verifyOtp'])->name('verification.verify');
+  Route::post('/verify-email/resend', [AuthController::class, 'resendOtp'])->name('verification.resend');
+
+  // Google OAuth
+  Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+  Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 });
 
 // Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 Route::match(['get', 'post'], '/switch-role/{role}', [AuthController::class, 'switchRole'])->name('switch-role');
 
-// Logged-in User Dashboard & Checkout
-Route::get('/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->middleware('auth')->name('user.dashboard');
-Route::get('/user/shipping/{order}', [\App\Http\Controllers\User\DashboardController::class, 'getShippingStatus'])->middleware('auth')->name('user.shipping.status');
-Route::post('/checkout', [\App\Http\Controllers\User\CheckoutController::class, 'store'])->middleware('auth')->name('checkout.store');
-Route::get('/cart', [\App\Http\Controllers\User\CartController::class, 'index'])->middleware('auth')->name('cart.index');
-Route::post('/cart/sync', [\App\Http\Controllers\User\CartController::class, 'sync'])->middleware('auth')->name('cart.sync');
-
+// Logged-in User Dashboard & Navigation Routes
 Route::middleware('auth')->group(function () {
+  Route::get('/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.dashboard');
+  Route::get('/produk', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.produk');
+  Route::get('/produk/{id}', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.produk.detail');
+  Route::get('/checkout', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.checkout');
+  Route::post('/checkout', [\App\Http\Controllers\User\CheckoutController::class, 'store'])->name('checkout.store');
+  Route::get('/cart', [\App\Http\Controllers\User\CartController::class, 'index'])->name('cart.index');
+  Route::post('/cart/sync', [\App\Http\Controllers\User\CartController::class, 'sync'])->name('cart.sync');
+  Route::get('/orders', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.orders');
+  Route::get('/tracking', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.tracking');
+  Route::get('/profile', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.profile');
+  Route::get('/ai-assistant', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.ai-assistant');
+  Route::get('/ai-gift', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.ai-gift');
+  Route::get('/ai-compare', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.ai-compare');
+  Route::get('/favorites', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('user.favorites');
+
+  Route::get('/user/shipping/{order}', [\App\Http\Controllers\User\DashboardController::class, 'getShippingStatus'])->name('user.shipping.status');
+  Route::post('/user/profile/update', [\App\Http\Controllers\User\DashboardController::class, 'updateProfile'])->name('user.profile.update');
   Route::post('/user/ai/chat', [\App\Http\Controllers\User\AiAssistantController::class, 'chat'])->name('user.ai.chat');
   Route::post('/user/ai/gift-recommend', [\App\Http\Controllers\User\AiAssistantController::class, 'recommendGift'])->name('user.ai.gift-recommend');
   Route::post('/user/ai/compare', [\App\Http\Controllers\User\AiAssistantController::class, 'compare'])->name('user.ai.compare');
@@ -81,6 +101,7 @@ Route::middleware(['auth', 'role:business'])->prefix('business')->name('business
   Route::post('/marketing/generate', [MarketingController::class, 'generate'])->name('marketing.generate');
 
   Route::get('/whatsapp', [WhatsAppController::class, 'index'])->name('whatsapp');
+  Route::post('/whatsapp/update', [WhatsAppController::class, 'updatePhone'])->name('whatsapp.update');
   Route::post('/whatsapp/broadcast', [WhatsAppController::class, 'broadcast'])->name('whatsapp.broadcast');
 
   Route::get('/instagram', [InstagramController::class, 'index'])->name('instagram');
@@ -116,3 +137,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
   Route::patch('/businesses/{business}', [BusinessVerificationController::class, 'update'])->name('businesses.update');
   Route::get('/ai-center', AiCenterController::class)->name('ai-center');
 });
+
+// WhatsApp gateway webhook (public, exempt from CSRF)
+Route::post('/whatsapp/webhook', [\App\Http\Controllers\WhatsAppWebhookController::class, 'handle']);
+

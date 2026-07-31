@@ -11,77 +11,78 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+  /** @use HasFactory<UserFactory> */
+  use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-        'phone',
-        'status',
-        'google_id',
-        'avatar',
-        'verification_code',
-        'verification_expires_at',
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var list<string>
+   */
+  protected $fillable = [
+    'name',
+    'email',
+    'password',
+    'role',
+    'phone',
+    'raw_phone',
+    'status',
+    'google_id',
+    'avatar',
+    'verification_code',
+    'verification_expires_at',
+  ];
+
+  /**
+   * The attributes that should be hidden for serialization.
+   *
+   * @var list<string>
+   */
+  protected $hidden = [
+    'password',
+    'remember_token',
+    'verification_code',
+  ];
+
+  /**
+   * Get the attributes that should be cast.
+   *
+   * @return array<string, string>
+   */
+  protected function casts(): array
+  {
+    return [
+      'email_verified_at' => 'datetime',
+      'verification_expires_at' => 'datetime',
+      'password' => 'hashed',
+      'role' => UserRole::class,
     ];
+  }
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-        'verification_code',
-    ];
+  public function business(): HasOne
+  {
+    return $this->hasOne(Business::class);
+  }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'verification_expires_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => UserRole::class,
-        ];
-    }
+  public function isBusiness(): bool
+  {
+    return $this->role === UserRole::Business;
+  }
 
-    public function business(): HasOne
-    {
-        return $this->hasOne(Business::class);
-    }
+  public function isVerified(): bool
+  {
+    return $this->status === 'terverifikasi' || !is_null($this->email_verified_at);
+  }
 
-    public function isBusiness(): bool
-    {
-        return $this->role === UserRole::Business;
-    }
+  public function getDashboardRouteName(): string
+  {
+    $roleValue = $this->role instanceof UserRole ? $this->role->value : (string) $this->role;
 
-    public function isVerified(): bool
-    {
-        return $this->status === 'terverifikasi' || !is_null($this->email_verified_at);
-    }
-
-    public function getDashboardRouteName(): string
-    {
-        $roleValue = $this->role instanceof UserRole ? $this->role->value : (string) $this->role;
-
-        return match ($roleValue) {
-            'business' => 'business.dashboard',
-            'government' => 'government.dashboard',
-            'admin' => 'admin.dashboard',
-            default => 'user.dashboard',
-        };
-    }
+    return match ($roleValue) {
+      'business' => 'business.dashboard',
+      'government' => 'government.dashboard',
+      'admin' => 'admin.dashboard',
+      default => 'user.dashboard',
+    };
+  }
 }

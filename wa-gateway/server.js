@@ -7,9 +7,12 @@ import makeWASocket, {
     useMultiFileAuthState,
     DisconnectReason,
     fetchLatestBaileysVersion,
+    downloadMediaMessage,
 } from '@whiskeysockets/baileys';
-import { rmSync } from 'node:fs';
+import { rmSync, writeFileSync, mkdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
+
 
 const PORT = Number(process.env.WA_PORT ?? 3010);
 const TOKEN = process.env.WA_GATEWAY_TOKEN ?? '';
@@ -70,6 +73,82 @@ async function startSocket() {
                 connectionState = 'close';
                 console.log('🔌 Koneksi terputus, mencoba sambung ulang…');
                 startSocket();
+            }
+        }
+    });
+
+    const LARAVEL_URL = process.env.LARAVEL_URL ?? 'http://localhost:8000';
+
+    sock.ev.on('messages.upsert', async (upsert) => {
+        const { messages, type } = upsert;
+        if (type !== 'notify') return;
+
+        for (const msg of messages) {
+            if (msg.key.fromMe || !msg.message) continue;
+
+            const from = msg.key.remoteJid;
+            if (!from || from.endsWith('@g.us') || from.endsWith('@newsletter')) continue;
+
+            const messageId = msg.key.id;
+            let text = '';
+            let mediaPath = null;
+            let typeMsg = 'text';
+
+            if (msg.message.conversation) {
+                text = msg.message.conversation;
+            } else if (msg.message.extendedTextMessage) {
+                text = msg.message.extendedTextMessage.text;
+            } else if (msg.message.imageMessage) {
+                text = msg.message.imageMessage.caption ?? '';
+                typeMsg = 'image';
+
+                try {
+                    console.log(`Downloading media for message ${messageId}...`);
+                    const buffer = await downloadMediaMessage(
+                        msg,
+                        'buffer',
+                        {},
+                        {
+                            logger,
+                            reuploadRequest: sock.updateMediaMessage,
+                        }
+                    );
+
+                    const tempDir = join(AUTH_DIR, '../temp');
+                    mkdirSync(tempDir, { recursive: true });
+                    const tempFilename = `temp_${messageId}.jpg`;
+                    mediaPath = join(tempDir, tempFilename);
+                    writeFileSync(mediaPath, buffer);
+                    console.log(`Media saved to ${mediaPath}`);
+                } catch (err) {
+                    console.error('Gagal mendownload media:', err.message);
+                }
+            }
+
+            if (!text && !mediaPath) continue;
+
+            try {
+                console.log(`Sending webhook to Laravel: ${from} -> ${text}`);
+                const response = await fetch(`${LARAVEL_URL}/whatsapp/webhook`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${TOKEN}`,
+                    },
+                    body: JSON.stringify({
+                        from: from,
+                        type: typeMsg,
+                        body: text,
+                        tempPath: mediaPath,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    console.error(`Laravel Webhook error (${response.status}):`, errText);
+                }
+            } catch (err) {
+                console.error('Gagal mengirim webhook ke Laravel:', err.message);
             }
         }
     });
@@ -139,17 +218,26 @@ app.post('/send', async (req, res) => {
         return res.status(503).json({ error: 'WhatsApp belum terhubung. Scan QR dulu di /qr.' });
     }
 
-    const number = String(to).replace(/\D/g, '');
-    if (number.length < 8) {
-        return res.status(422).json({ error: 'Nomor tujuan tidak valid.' });
+    let jid;
+    if (String(to).includes('@')) {
+        jid = to;
+    } else {
+        const number = String(to).replace(/\D/g, '');
+        if (number.length < 8) {
+            return res.status(422).json({ error: 'Nomor tujuan tidak valid.' });
+        }
+        jid = `${number}@s.whatsapp.net`;
     }
-    const jid = `${number}@s.whatsapp.net`;
 
     try {
-        // Pastikan nomor terdaftar di WhatsApp
-        const [check] = await sock.onWhatsApp(jid);
-        if (!check?.exists) {
-            return res.status(404).json({ error: `Nomor ${number} tidak terdaftar di WhatsApp.` });
+        let targetJid = jid;
+        // Pastikan nomor terdaftar di WhatsApp (onWhatsApp hanya bekerja untuk nomor telepon, dilewati untuk LID)
+        if (!jid.endsWith('@lid')) {
+            const [check] = await sock.onWhatsApp(jid);
+            if (!check?.exists) {
+                return res.status(404).json({ error: `Nomor ${jid} tidak terdaftar di WhatsApp.` });
+            }
+            targetJid = check.jid ?? jid;
         }
 
         // Throttle sederhana antar pengiriman (anti-spam / anti-banned)
@@ -157,13 +245,43 @@ app.post('/send', async (req, res) => {
         if (wait > 0) await sleep(wait);
         lastSentAt = Date.now();
 
-        const result = await sock.sendMessage(check.jid ?? jid, { text: String(message) });
+        const result = await sock.sendMessage(targetJid, { text: String(message) });
 
-        return res.json({ id: result?.key?.id ?? null, to: number });
+        return res.json({ id: result?.key?.id ?? null, to: targetJid });
     } catch (err) {
         console.error('Gagal kirim:', err?.message ?? err);
 
         return res.status(500).json({ error: 'Gagal mengirim pesan: ' + (err?.message ?? 'unknown') });
+    }
+});
+
+app.get('/resolve', async (req, res) => {
+    const { phone } = req.query ?? {};
+
+    if (!phone) {
+        return res.status(422).json({ error: 'Parameter "phone" wajib diisi.' });
+    }
+
+    if (connectionState !== 'open' || !sock) {
+        return res.status(503).json({ error: 'WhatsApp belum terhubung.' });
+    }
+
+    const number = String(phone).replace(/\D/g, '');
+    if (number.length < 8) {
+        return res.status(422).json({ error: 'Nomor tidak valid.' });
+    }
+
+    try {
+        const jid = `${number}@s.whatsapp.net`;
+        const [check] = await sock.onWhatsApp(jid);
+        console.log('RESOLVE CHECK:', check);
+        if (check?.exists) {
+            return res.json({ exists: true, jid: check.lid ?? check.jid });
+        }
+        return res.json({ exists: false, jid: null });
+    } catch (err) {
+        console.error('Gagal resolve:', err?.message ?? err);
+        return res.status(500).json({ error: 'Gagal resolve nomor: ' + (err?.message ?? 'unknown') });
     }
 });
 

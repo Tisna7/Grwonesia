@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use App\Enums\OrderChannel;
 use App\Enums\OrderStatus;
 use App\Models\Business;
