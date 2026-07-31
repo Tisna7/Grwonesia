@@ -6,6 +6,7 @@ use App\Services\WhatsApp\BaileysWhatsAppGateway;
 use App\Services\WhatsApp\LogWhatsAppGateway;
 use App\Services\WhatsApp\WhatsAppGateway;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {

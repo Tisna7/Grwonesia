@@ -14,7 +14,7 @@
         <div class="flex items-center gap-2 font-semibold text-purple-300">
           <span class="w-2.5 h-2.5 rounded-full bg-purple-400 animate-pulse"></span> Grownesia AI Bot
         </div>
-        <p>Halo {{ Auth::user()->name ?? 'Budi' }}! Saya AI Personal Shopper Anda. Tanyakan kebutuhan Anda atau pilih
+        <p>Halo {{ explode(' ', Auth::user()->name ?? 'Kamu')[0] }}! Saya AI Personal Shopper Anda. Tanyakan kebutuhan Anda atau pilih
           kueri favorit berikut:</p>
         <div class="pt-2 flex flex-wrap gap-2">
           <button @click="sendAiQuery('Saya ingin hadiah untuk ibu umur 50 tahun.')"

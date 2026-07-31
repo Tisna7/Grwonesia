@@ -27,7 +27,7 @@
         <div class="flex items-center gap-2 font-semibold text-purple-300">
           <span class="w-2 h-2 rounded-full bg-purple-400"></span> Grownesia AI Bot
         </div>
-        <p>Halo {{ Auth::user()->name ?? 'Budi' }}! Saya asisten belanja berbasis AI Anda. Ketik pertanyaan Anda atau
+        <p>Halo {{ explode(' ', Auth::user()->name ?? 'Kamu')[0] }}! Saya asisten belanja berbasis AI Anda. Ketik pertanyaan Anda atau
           pilih opsi cepat:</p>
         <div class="pt-1 flex flex-col gap-1.5">
           <button @click="sendAiQuery('Saya ingin hadiah untuk ibu umur 50 tahun.')"

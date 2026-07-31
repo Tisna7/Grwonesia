@@ -46,7 +46,7 @@ function grownesiaUserDashboard() {
     chatMessages: [
       {
         sender: 'ai',
-        text: 'Halo Budi! Saya AI Assistant Anda. Silakan tanyakan saran produk atau hadiah yang Anda butuhkan.',
+        text: 'Halo ' + ((initData.userProfile && initData.userProfile.name) ? initData.userProfile.name.split(' ')[0] : 'Kamu') + '! Saya AI Assistant Anda. Silakan tanyakan saran produk atau hadiah yang Anda butuhkan.',
       }
     ],
 
